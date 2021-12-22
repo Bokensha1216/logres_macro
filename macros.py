@@ -77,9 +77,17 @@ def startBattle():
                 pyautogui.click(imgrecg.convToAbs(50 + 80 * i, 750))
                 pix = imgrecg.getPixel(50 + 80 * i, 750)
 
+
 # フィールド画面に戻るまで待つ
-def waitField(sec=1):
+def waitField(sec=0.2):
     pix = imgrecg.getPixel(314, 40)
     while pix[2] > 10:
         time.sleep(sec)
         pix = imgrecg.getPixel(314, 40)
+
+
+def questCleared():
+    q = pyautogui.locateOnScreen("images/ku.jpg", region=Screen.regionWithoutStatus, confidence=0.6,
+                                 grayscale=True)
+
+    return q is not None
