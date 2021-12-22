@@ -9,6 +9,12 @@ def screenshot():
     return image
 
 
+# 相対座標を入れる
+def getPixel(x, y):
+    image = screenshot()
+    return image.getpixel((x, y))
+
+
 def locateAll(image, confidence=0.65):
     items = pyautogui.locateAllOnScreen(image, region=Screen.region, grayscale=True, confidence=confidence)
     return items
@@ -80,3 +86,11 @@ def convToRegion(x1, y1, x2, y2):
     h = y2 - y1
     region = (x, y, w, h)
     return region
+
+
+# 絶対座標に変換
+def convToAbs(x, y):
+    xAbs = x + Screen.region[0]
+    yAbs = y + Screen.region[1]
+
+    return xAbs, yAbs

@@ -4,7 +4,7 @@ import ui
 from setup import *
 
 
-# 相対座標表示
+# 相対座標取得
 def getCoordinate():
     x, y = pyautogui.position()
     x = x - Screen.region[0]
@@ -13,7 +13,7 @@ def getCoordinate():
     return x, y
 
 
-# 絶対座標表示
+# 絶対座標取得
 def getAbsCoordinate():
     x, y = pyautogui.position()
 
