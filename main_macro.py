@@ -14,13 +14,14 @@ def syukaiQuest(questTimes):
 
         for questTime in range(questTimes):
             # クエスト開始
+            print("startQuest")
             navi = macros.locateQuestNavi()
             while navi is None:
                 time.sleep(1)
                 navi = macros.locateQuestNavi()
 
             time.sleep(1.5)
-
+            print("locateEnemy")
             enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=(navi))
             while len(enemylist) == 0:
                 print("a")
