@@ -6,13 +6,17 @@ from setup import *
 
 
 def locateQuestNavi():
-    x, y, w, h = pyautogui.locateOnScreen("images/navi.png", region=Screen.regionWithoutStatus, confidence=0.995,
+    try:
+        x, y, w, h = pyautogui.locateOnScreen("images/navi.png", region=Screen.regionWithoutStatus, confidence=0.65,
                                           grayscale=True)
-    return x - 10, y + 50
+    except TypeError:
+        return None
+    else:
+        return x - 10, y + 50
 
 
 def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
-    enemies = imgrecg.locateAll("images/lv.png")
+    enemies = imgrecg.locateAll("images/lv.png", confidence=0.64)
 
     enemyList = []
     for enemy in enemies:
@@ -48,7 +52,28 @@ def goToNearestEnemy(enemyList):
         distances[enemy] = distance
 
     nearestEnemy = min(distances)
-    pyautogui.click(nearestEnemy)
+    direction = imgrecg.direction_vec(Screen.center, nearestEnemy)
+    clickPoint = nearestEnemy + direction*10
+    pyautogui.click(clickPoint[0], clickPoint[1])
+    return nearestEnemy
+
+
+def traceEnemy(enemyList):
+    clickedPoint = goToNearestEnemy(enemyList)
+    time.sleep(0.5)
+
+    while not isInBattle():
+        enemyList = locateEnemy(limitRange=True, locateRange=140, locateCenter=clickedPoint)
+        while len(enemyList) == 0:
+            time.sleep(0.5)
+            enemyList = locateEnemy(limitRange=True, locateRange=140, locateCenter=clickedPoint)
+            if isInBattle():
+                return
+
+        clickedPoint = goToNearestEnemy(enemyList)
+        time.sleep(0.5)
+
+
 
 
 def isInBattle():
@@ -91,3 +116,31 @@ def questCleared():
                                  grayscale=True)
 
     return q is not None
+
+
+def goToNextQuest():
+    # もう一回ボタン
+    pyautogui.click(imgrecg.convToAbs(157, 541))
+    time.sleep(5)
+
+    # 出発ボタン
+    x, y = (371, 763)
+    pix = imgrecg.getPixel(x, y)
+    while pix != (255, 255, 255):
+        # 次ボタン
+        x2, y2 = (385, 827)
+        pix2 = imgrecg.getPixel(x2, y2)
+        if pix2 == (255, 255, 255):
+            pyautogui.click(imgrecg.convToAbs(x2, y2))
+            time.sleep(1)
+            
+        # 開封ボタン
+        kaihu = pyautogui.locateCenterOnScreen("images/kaihu.jpg", region=Screen.regionWithoutStatus, confidence=0.6,
+                                     grayscale=True)
+        if kaihu is not None:
+            pyautogui.click(kaihu)
+            time.sleep(1)
+
+        time.sleep(1)
+        pix = imgrecg.getPixel(x, y)
+    pyautogui.click(imgrecg.convToAbs(x, y))

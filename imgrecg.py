@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-
+import numpy as np
 from setup import *
 
 
@@ -94,3 +94,11 @@ def convToAbs(x, y):
     yAbs = y + Screen.region[1]
 
     return xAbs, yAbs
+
+
+# AからBへの向かう単位ベクトルを返す AとBは(x, y)
+def direction_vec(A, B):
+    A = np.array(A)
+    B = np.array(B)
+    vec = (B - A) / np.linalg.norm(B - A, ord=2)
+    return vec
