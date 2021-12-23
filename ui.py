@@ -1,4 +1,5 @@
 from ursina import *
+from ursina.prefabs.input_field import *
 
 
 class UiObject(Entity):
@@ -7,7 +8,7 @@ class UiObject(Entity):
 
     def multiplyScale(self, i):
         after = self.scale * i
-        yd = self.scale_y * (i-1)
+        yd = self.scale_y * (i - 1)
         self.scale = after
         self.scale_z = 1
 
@@ -18,6 +19,7 @@ class UiObject(Entity):
 
         return cool
 
+
 class MyButton(Button):
     def __init__(self, text='', **kwargs):
         if 'origin' not in kwargs:
@@ -27,6 +29,9 @@ class MyButton(Button):
             kwargs['scale'] = (0.25, 0.1)
 
         super().__init__(text, **kwargs)
+
+        if 'textSize' in kwargs:
+            self.text_entity.scale *= kwargs['textSize']
 
         self.kwargs = {}
         self.selected = False
@@ -77,12 +82,14 @@ class MyText(Text):
         super().__init__(text, **kwargs)
 
 
-# class MyText2(UiObject):
-#     def __init__(self, **kwargs):
-#         super().__init__()
-#
-#         self.textEntity = MyText(**kwargs)
-#         self.text
-#
-#     def update(self):
-#         self.textEntity.text
+class MyInputField(InputField):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        for key, value in kwargs.items():
+            if 'max_width' in key:
+                setattr(self, key, value)
+
+    def update(self):
+        if len(self.text) > self.max_width:
+            self.text = self.text[:-1]
