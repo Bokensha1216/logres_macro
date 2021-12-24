@@ -13,6 +13,9 @@ import win32api
 import win32gui
 import win32con
 
+import glob
+from PIL import Image
+
 
 # windowを見つけて選択状態にする
 def findWindow(window_name="logres_andapp"):
@@ -32,6 +35,21 @@ def findWindow(window_name="logres_andapp"):
     Screen.center = pyautogui.center(Screen.region)
     Screen.w = apw_x
     Screen.h = apw_y
+
+    resizeImages()
+
+
+def resizeImages():
+    imageDic = "images/"
+    images = glob.glob('images/*.png')
+    resizedDic = "resizedImages/"
+    myWidth = 492
+    myHeight = 889
+    for imName in images:
+        img = Image.open(imName)
+        img_w, img_h = img.width * (Screen.w / myWidth), img.height * (Screen.h / myHeight)
+        img_resize = img.resize((int(img_w), int(img_h)))
+        img_resize.save(resizedDic + imName[len(imageDic):])
 
 
 class Screen:
