@@ -10,7 +10,7 @@ def syukaiQuest(questTimes):
     def syukaiQuestThread():
 
         findWindow()
-        # image = "images/navi.png"
+        # image = "resizedImages/navi.png"
         # items = wrapping.locateAllOnScreen(image, region=appWindow.region, confidence=0.65)
         # imgrecg.drawLocatedItems(items)
 
