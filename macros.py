@@ -12,7 +12,7 @@ def locateQuestNavi():
 
 
 def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
-    enemies = locateAllOnScreen("resizedImages/lv.png", appWindow.regionWithoutStatus, confidence=0.65, grayscale=True)
+    enemies = locateAllOnScreen("resizedImages/lv.png", appWindow.regionWithoutStatus, confidence=0.7, grayscale=True)
 
     enemyList = []
     for enemy in enemies:
@@ -70,9 +70,9 @@ def traceEnemy(enemyList):
 
 
 def isInBattle():
-    region = convToRegion(386, 77, 425, 110)
+    region = convToRegion(342, 46, 446, 156)
     image = "resizedImages/clock.png"
-    clock = locateOnScreen(image, region=region, grayscale=True, confidence=0.9)
+    clock = locateOnScreen(image, region=region, grayscale=True, confidence=0.7)
     return clock is not None
 
 
@@ -103,7 +103,7 @@ def startBattle():
 
 # フィールド画面に戻るまで待つ
 def waitField(sec=0.2):
-    region = convToRegion(292, 20, 359, 72)
+    region = convToRegion(263, 0, 378, 104)
     friendIcon = locateOnScreen("resizedImages/people.png", region=region, confidence=0.65,
                                     grayscale=True)
     while friendIcon is None:
