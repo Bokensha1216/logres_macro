@@ -88,6 +88,7 @@ def startBattle():
         pix = getPixel(x2, y2)
 
     for i in range(5):
+        time.sleep(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760
         click(clickPosX, clickPosY)
         if i == 0:
