@@ -116,7 +116,7 @@ def waitField(sec=0.2):
 
 
 def questCleared():
-    q = locateOnScreen("resizedImages/ku.jpg", region=appWindow.regionWithoutStatus, confidence=0.6,
+    q = locateOnScreen("resizedImages/ku.png", region=appWindow.regionWithoutStatus, confidence=0.6,
                        grayscale=True)
 
     return q is not None
@@ -137,14 +137,14 @@ def goToNextQuest():
         # もう一度挑戦ボタン
         mouichidoRegion = convToRegion(262, 762, 477, 881)
         print("checkmouichido")
-        mouichido = locateCenterOnScreen("resizedImages/mouichido.jpg", region=mouichidoRegion, confidence=0.6,
+        mouichido = locateCenterOnScreen("resizedImages/mouichido.png", region=mouichidoRegion, confidence=0.6,
                                      grayscale=True)
         if mouichido is not None:
             click(mouichido[0], mouichido[1])
             time.sleep(2)
 
         # 開封ボタン
-        kaihu = locateCenterOnScreen("resizedImages/kaihu.jpg", region=appWindow.regionWithoutStatus, confidence=0.6,
+        kaihu = locateCenterOnScreen("resizedImages/kaihu.png", region=appWindow.regionWithoutStatus, confidence=0.6,
                                      grayscale=True)
         if kaihu is not None:
             click(kaihu[0], kaihu[1])
