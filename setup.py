@@ -26,13 +26,18 @@ def findWindow(window_name="logres_andapp"):
 
     Screen.parent_handle = parent_handle
     Screen.region = (win_x1, win_y1, apw_x, apw_y)
-    # ステータス部分を省いた範囲
-    Screen.regionWithoutStatus = (win_x1, win_y1+72, apw_x, apw_y-72)
+    # # ステータス部分を省いた範囲
+    # status = 0.0810
+    # Screen.regionWithoutStatus = (win_x1, win_y1+int(status*apw_y), apw_x, apw_y-int(status*apw_y))
     Screen.center = pyautogui.center(Screen.region)
+    Screen.w = apw_x
+    Screen.h = apw_y
 
 
 class Screen:
     parent_handle = None
     region = None
-    regionWithoutStatus = None
+    # regionWithoutStatus = None
     center = None
+    w = None
+    h = None

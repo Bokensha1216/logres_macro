@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import numpy as np
 from setup import *
+import wrapping
 
 
 def screenshot():
@@ -13,6 +14,12 @@ def screenshot():
 def getPixel(x, y):
     image = screenshot()
     return image.getpixel((x, y))
+
+
+# 割合座標を入れる
+def getPixelRatio(x, y):
+    x, y = convRatioToRelative(x, y)
+    return getPixel(x, y)
 
 
 def locateAll(image, confidence=0.65):
@@ -49,7 +56,7 @@ def drawLocatedItems(items):
     image = screenshot()
     draw = ImageDraw.Draw(image)
     for item in items:
-        itemCoor = convert(item)
+        itemCoor = convert(wrapping.RegionToPixel(item))
         print(itemCoor)
         draw.rectangle(itemCoor, fill=(255, 255, 0))
     image.save('output/locatedItems.png', quality=95)
@@ -78,21 +85,38 @@ def convert(box):
     return boxConv
 
 
-# 相対座標(x1, y1, x2, y2)を絶対座標(x, y, w, h)に変換
-def convToRegion(x1, y1, x2, y2):
-    x = x1 + Screen.region[0]
-    y = y1 + Screen.region[1]
-    w = x2 - x1
-    h = y2 - y1
-    region = (x, y, w, h)
-    return region
-
-
-# 絶対座標に変換
+# 相対座標を絶対座標に変換
 def convToAbs(x, y):
     xAbs = x + Screen.region[0]
     yAbs = y + Screen.region[1]
 
+    return xAbs, yAbs
+
+
+# 割合座標を絶対座標に変換
+def convRatioToAbs(x, y):
+    x, y = convRatioToRelative(x, y)
+    return convToAbs(x, y)
+
+
+# 相対座標を割合座標に変換
+def convToRatio(x, y):
+    x = x / Screen.w
+    y = y / Screen.h
+
+    return x, y
+
+
+# 割合座標を相対座標に変換
+def convRatioToRelative(x, y):
+    x = int(x * Screen.w)
+    y = int(y * Screen.h)
+    return x, y
+
+
+def convAbsToRel(x, y):
+    xAbs = x - Screen.region[0]
+    yAbs = y - Screen.region[1]
     return xAbs, yAbs
 
 
@@ -102,3 +126,6 @@ def direction_vec(A, B):
     B = np.array(B)
     vec = (B - A) / np.linalg.norm(B - A, ord=2)
     return vec
+
+def totalRGB(rgb):
+    return rgb[0] + rgb[1] + rgb[2]

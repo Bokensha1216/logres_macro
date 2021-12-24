@@ -2,6 +2,8 @@ import threading
 
 from setup import *
 import macros
+from coordinate import *
+import wrapping
 
 
 def syukaiQuest(questTimes):
@@ -9,7 +11,7 @@ def syukaiQuest(questTimes):
 
         findWindow()
         # image = "images/navi.png"
-        # items = imgrecg.locateAll(image, confidence=0.65)
+        # items = wrapping.locateAllOnScreen(image, region=appWindow.region, confidence=0.65)
         # imgrecg.drawLocatedItems(items)
 
         for questTime in range(questTimes):
@@ -17,6 +19,7 @@ def syukaiQuest(questTimes):
             print("startQuest")
             navi = macros.locateQuestNavi()
             while navi is None:
+                print("navi not Found")
                 time.sleep(1)
                 navi = macros.locateQuestNavi()
 
@@ -31,6 +34,7 @@ def syukaiQuest(questTimes):
 
             # クエストクリアまで
             while True:
+                print("traceEnemy")
                 macros.traceEnemy(enemylist)
 
                 time.sleep(1)
@@ -51,10 +55,13 @@ def syukaiQuest(questTimes):
                 time.sleep(1.5)
                 if macros.questCleared():
                     break
-                enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=Screen.center)
+                enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
                 while len(enemylist) == 0:
+                    print("notFoundEnemy")
                     time.sleep(0.5)
-                    enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=Screen.center)
+                    enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
+                if macros.questCleared():
+                    break
 
             time.sleep(0.5)
             print("questclear")
