@@ -97,7 +97,7 @@ def startBattle():
         if i == 0:
             wait(0.2)
             region = convToRegion(0, 669, 157, 836)
-            while locateOnScreen("images/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
+            while locateOnScreen("resizedImages/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
                 wait(0.2)
                 click(clickPosX, clickPosY)
 

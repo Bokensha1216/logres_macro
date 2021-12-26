@@ -49,6 +49,9 @@ def resizeImages():
         img = Image.open(imName)
         img_w, img_h = img.width * (Screen.w / myWidth), img.height * (Screen.h / myHeight)
         img_resize = img.resize((int(img_w), int(img_h)), Image.LANCZOS)
+        if img_resize.width <= 5 or img_resize.height <= 5:
+            img.save(resizedDic + imName[len(imageDic):])
+            continue
         img_resize.save(resizedDic + imName[len(imageDic):])
 
 
