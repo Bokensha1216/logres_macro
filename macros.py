@@ -80,7 +80,7 @@ def isInBattle():
 
 
 def startBattle():
-    x, y = 336, 216
+    x, y = 340, 216
     click(x, y)
     wait(1.5)
     x2, y2 = 440, 790
@@ -96,13 +96,10 @@ def startBattle():
         click(clickPosX, clickPosY)
         if i == 0:
             wait(0.2)
-            pix = getPixel(clickPosX, clickPosY)
-            print(pix)
-            while imgrecg.totalRGB(pix) < 700:
-                click(clickPosX, clickPosY)
+            region = convToRegion(0, 669, 157, 836)
+            while locateOnScreen("images/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
                 wait(0.2)
-                pix = getPixel(clickPosX, clickPosY)
-                print(pix)
+                click(clickPosX, clickPosY)
 
 
 # フィールド画面に戻るまで待つ
