@@ -4,7 +4,7 @@ import numpy as np
 
 def locateQuestNavi():
     try:
-        x, y, w, h = locateOnScreen("resizedImages/navi.png", region=appWindow.regionWithoutStatus, confidence=0.65)
+        x, y, w, h = locateOnScreen("resizedImages/navi.bmp", region=appWindow.regionWithoutStatus, confidence=0.65)
     except TypeError:
         return None
     else:
@@ -12,7 +12,7 @@ def locateQuestNavi():
 
 
 def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
-    enemies = locateAllOnScreen("resizedImages/lv.png", appWindow.regionWithoutStatus, confidence=0.7, grayscale=True)
+    enemies = locateAllOnScreen("resizedImages/lv.bmp", appWindow.regionWithoutStatus, confidence=0.7, grayscale=True)
 
     enemyList = []
     for enemy in enemies:
@@ -70,14 +70,14 @@ def traceEnemy(enemyList):
 
 
 def isInBattle():
-    region = convToRegion(342, 46, 446, 156)
-    image = "resizedImages/clock.png"
+    region = convToRegion(367, 45, 446, 110)
+    image = "resizedImages/clock.bmp"
     clock = locateOnScreen(image, region=region, grayscale=True, confidence=0.7)
     return clock is not None
 
 
 def startBattle():
-    x, y = 329, 226
+    x, y = 336, 216
     click(x, y)
     time.sleep(1.5)
     x2, y2 = 440, 790
@@ -105,19 +105,19 @@ def startBattle():
 # フィールド画面に戻るまで待つ
 def waitField(sec=0.2):
     region = convToRegion(263, 0, 378, 104)
-    friendIcon = locateOnScreen("resizedImages/people.png", region=region, confidence=0.65,
+    friendIcon = locateOnScreen("resizedImages/people.bmp", region=region, confidence=0.65,
                                     grayscale=True)
     while friendIcon is None:
         print("notpeople")
         time.sleep(sec)
         if questCleared():
             break
-        friendIcon = locateOnScreen("resizedImages/people.png", region=region, confidence=0.65,
+        friendIcon = locateOnScreen("resizedImages/people.bmp", region=region, confidence=0.65,
                                     grayscale=True)
 
 
 def questCleared():
-    q = locateOnScreen("resizedImages/ku.png", region=appWindow.regionWithoutStatus, confidence=0.6,
+    q = locateOnScreen("resizedImages/ku.bmp", region=appWindow.regionWithoutStatus, confidence=0.6,
                        grayscale=True)
 
     return q is not None
@@ -130,7 +130,7 @@ def goToNextQuest():
 
     # 出発ボタン
     syuppatuRegion = convToRegion(289, 716, 474, 815)
-    syuppatu = locateCenterOnScreen("resizedImages/syuppatu.png", region=syuppatuRegion, confidence=0.6,
+    syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                      grayscale=True)
     # x, y = (371, 763)
     # pix = getPixel(x, y)
@@ -138,21 +138,21 @@ def goToNextQuest():
         # もう一度挑戦ボタン
         mouichidoRegion = convToRegion(262, 762, 477, 881)
         print("checkmouichido")
-        mouichido = locateCenterOnScreen("resizedImages/mouichido.png", region=mouichidoRegion, confidence=0.6,
+        mouichido = locateCenterOnScreen("resizedImages/mouichido.bmp", region=mouichidoRegion, confidence=0.7,
                                      grayscale=True)
         if mouichido is not None:
             click(mouichido[0], mouichido[1])
             time.sleep(2)
 
         # 開封ボタン
-        kaihu = locateCenterOnScreen("resizedImages/kaihu.png", region=appWindow.regionWithoutStatus, confidence=0.6,
+        kaihu = locateCenterOnScreen("resizedImages/kaihu.bmp", region=appWindow.regionWithoutStatus, confidence=0.7,
                                      grayscale=True)
         if kaihu is not None:
             click(kaihu[0], kaihu[1])
             time.sleep(1)
 
         time.sleep(1)
-        syuppatu = locateCenterOnScreen("resizedImages/syuppatu.png", region=syuppatuRegion, confidence=0.6,
+        syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                         grayscale=True)
     click(syuppatu[0], syuppatu[1])
 

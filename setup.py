@@ -20,7 +20,7 @@ from PIL import Image
 # windowを見つけて選択状態にする
 def findWindow(window_name="logres_andapp"):
     parent_handle = win32gui.FindWindow(None, window_name)
-    win_x1, win_y1, win_x2, win_y2 = win32gui.GetWindowRect(parent_handle)
+    win_x1, win_y1, win_x2, win_y2 = win32gui.GetClientRect(parent_handle)
     print(u"アプリの座標:" + str(win_x1) + "/" + str(win_y1))
     apw_x = win_x2 - win_x1
     apw_y = win_y2 - win_y1
@@ -41,14 +41,14 @@ def findWindow(window_name="logres_andapp"):
 
 def resizeImages():
     imageDic = "images/"
-    images = glob.glob('images/*.png')
+    images = glob.glob('images/*.bmp')
     resizedDic = "resizedImages/"
-    myWidth = 492
-    myHeight = 889
+    myWidth = 486
+    myHeight = 864
     for imName in images:
         img = Image.open(imName)
         img_w, img_h = img.width * (Screen.w / myWidth), img.height * (Screen.h / myHeight)
-        img_resize = img.resize((int(img_w), int(img_h)))
+        img_resize = img.resize((int(img_w), int(img_h)), Image.LANCZOS)
         img_resize.save(resizedDic + imName[len(imageDic):])
 
 

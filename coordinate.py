@@ -1,5 +1,6 @@
 from setup import *
 import imgrecg
+import win32gui
 
 
 def coordinateToPixelRelative(x, y):
@@ -8,12 +9,12 @@ def coordinateToPixelRelative(x, y):
 
 def coordinateToPixelAbs(x, y):
     x, y = coordinateToPixelRelative(x, y)
-    x, y = imgrecg.convToAbs(x, y)
+    x, y = win32gui.ClientToScreen(Screen.parent_handle, (x, y))
     return x, y
 
 
 def AbsPixelToCoordinate(x, y):
-    x, y = imgrecg.convAbsToRel(x, y)
+    x, y = win32gui.ScreenToClient(Screen.parent_handle, (x, y))
     return int(x * (appWindow.w / Screen.w)), int(y * (appWindow.h / Screen.h))
 
 
@@ -37,7 +38,7 @@ class appWindow:
         self.h = 900
         self.region = (0, 0, self.w, self.h)
         self.center = (int(self.w / 2), int(self.h / 2))
-        self.regionWithoutStatus = (0, 73, self.w, self.h - 73)
+        self.regionWithoutStatus = (0, 53, self.w, self.h - 53)
 
 
 appWindow = appWindow()

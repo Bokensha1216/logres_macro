@@ -1,6 +1,7 @@
 from ursina import *
 import ui
 import numpy as np
+import win32gui
 
 from setup import *
 from wrapping import *
@@ -10,8 +11,7 @@ from coordinate import *
 # 相対座標取得
 def getCoordinate():
     x, y = pyautogui.position()
-    x = x - Screen.region[0]
-    y = y - Screen.region[1]
+    x, y = win32gui.ScreenToClient(Screen.parent_handle, (x, y))
 
     return x, y
 
