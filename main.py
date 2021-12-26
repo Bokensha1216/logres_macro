@@ -1,11 +1,15 @@
 import sys
+import threading
 import tkinter as tk
 
-
 import main_macro
-
+from exception import *
+from coordinate import *
 
 if __name__ == "__main__":
+    global mainThread, checkMacroThread
+
+
     def start():
         messageLabel["text"] = ""
         questTimes = questTimesEntry.get()
@@ -17,16 +21,42 @@ if __name__ == "__main__":
             else:
                 messageLabel["text"] = "数字以外が入力されています"
         else:
-            global mainThread
-            if mainThread is None or not mainThread.is_alive():
+            global mainThread, checkMacroThread
+
+            def makeThread():
+                global mainThread, checkMacroThread
                 messageLabel["text"] = "開始"
                 mainThread = main_macro.syukaiQuest(questTimes)
-            else:
-                messageLabel["text"] = "すでに開始しています"
+                checkMacroThread = threading.Thread(target=checkMacro)
+                checkMacroThread.start()
+
+            try:
+                if mainThread.is_alive():
+                    messageLabel["text"] = "すでに開始しています"
+                else:
+                    makeThread()
+
+            except NameError:
+                makeThread()
 
 
     def stop():
-        sys.exit( )
+        try:
+            if mainThread.is_alive():
+                appWindow.eventQueue.put(FinishButtonException())
+                if checkMacroThread.is_alive():
+                    messageLabel["text"] = "マクロ終了中"
+            else:
+                messageLabel["text"] = "すでに終了しています"
+        except NameError as e:
+            print(e)
+            messageLabel["text"] = "開始されていません"
+
+
+    def checkMacro():
+        mainThread.join()
+        messageLabel["text"] = "マクロが終了しました"
+
 
     root = tk.Tk()
     root.geometry("260x200")
@@ -53,7 +83,5 @@ if __name__ == "__main__":
     frame3.pack(pady=10)
     messageLabel = tk.Label(frame3)
     messageLabel.pack()
-
-    mainThread = None
 
     root.mainloop()

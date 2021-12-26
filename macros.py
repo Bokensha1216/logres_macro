@@ -1,3 +1,6 @@
+import _queue
+import time
+
 from wrapping import *
 import numpy as np
 
@@ -55,18 +58,18 @@ def goToNearestEnemy(enemyList):
 
 def traceEnemy(enemyList):
     clickedPoint = goToNearestEnemy(enemyList)
-    time.sleep(0.5)
+    wait(0.5)
 
     while not isInBattle():
         enemyList = locateEnemy(limitRange=True, locateRange=140, locateCenter=clickedPoint)
         while len(enemyList) == 0:
-            time.sleep(0.5)
+            wait(0.5)
             enemyList = locateEnemy(limitRange=True, locateRange=140, locateCenter=clickedPoint)
             if isInBattle():
                 return
 
         clickedPoint = goToNearestEnemy(enemyList)
-        time.sleep(0.5)
+        wait(0.5)
 
 
 def isInBattle():
@@ -79,25 +82,25 @@ def isInBattle():
 def startBattle():
     x, y = 336, 216
     click(x, y)
-    time.sleep(1.5)
+    wait(1.5)
     x2, y2 = 440, 790
     pix = getPixel(x2, y2)
     while pix[0] < 10:
-        time.sleep(0.5)
+        wait(0.5)
         click(x, y)
         pix = getPixel(x2, y2)
 
     for i in range(5):
-        time.sleep(0.1)
+        wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760
         click(clickPosX, clickPosY)
         if i == 0:
-            time.sleep(0.2)
+            wait(0.2)
             pix = getPixel(clickPosX, clickPosY)
             print(pix)
             while imgrecg.totalRGB(pix) < 700:
                 click(clickPosX, clickPosY)
-                time.sleep(0.2)
+                wait(0.2)
                 pix = getPixel(clickPosX, clickPosY)
                 print(pix)
 
@@ -106,10 +109,10 @@ def startBattle():
 def waitField(sec=0.2):
     region = convToRegion(263, 0, 378, 104)
     friendIcon = locateOnScreen("resizedImages/people.bmp", region=region, confidence=0.65,
-                                    grayscale=True)
+                                grayscale=True)
     while friendIcon is None:
         print("notpeople")
-        time.sleep(sec)
+        wait(sec)
         if questCleared():
             break
         friendIcon = locateOnScreen("resizedImages/people.bmp", region=region, confidence=0.65,
@@ -126,12 +129,12 @@ def questCleared():
 def goToNextQuest():
     # もう一回ボタン
     click(157, 541)
-    time.sleep(5)
+    wait(5)
 
     # 出発ボタン
     syuppatuRegion = convToRegion(289, 716, 474, 815)
     syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
-                                     grayscale=True)
+                                    grayscale=True)
     # x, y = (371, 763)
     # pix = getPixel(x, y)
     while syuppatu is None:
@@ -139,25 +142,43 @@ def goToNextQuest():
         mouichidoRegion = convToRegion(262, 762, 477, 881)
         print("checkmouichido")
         mouichido = locateCenterOnScreen("resizedImages/mouichido.bmp", region=mouichidoRegion, confidence=0.7,
-                                     grayscale=True)
+                                         grayscale=True)
         if mouichido is not None:
             click(mouichido[0], mouichido[1])
-            time.sleep(2)
+            wait(2)
 
         # 開封ボタン
         kaihu = locateCenterOnScreen("resizedImages/kaihu.bmp", region=appWindow.regionWithoutStatus, confidence=0.7,
                                      grayscale=True)
         if kaihu is not None:
             click(kaihu[0], kaihu[1])
-            time.sleep(1)
+            wait(1)
 
-        time.sleep(1)
+        wait(1)
         syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                         grayscale=True)
     click(syuppatu[0], syuppatu[1])
 
 
-# 割合座標を入れる
-def ratioClick(x, y):
-    x, y = imgrecg.convRatioToAbs(x, y)
-    pyautogui.click(x, y)
+def wait(sec):
+    if sec <= 1:
+        checkEvent()
+        time.sleep(sec)
+    elif sec <= 10:
+        for i in range(int(sec/0.5)):
+            checkEvent()
+            time.sleep(0.5)
+    else:
+        for i in range(int(sec)):
+            checkEvent()
+            time.sleep(1)
+
+
+def checkEvent():
+    try:
+        event = appWindow.eventQueue.get(block=False)
+        if isinstance(event, Exception):
+            raise event
+    except _queue.Empty:
+        pass
+

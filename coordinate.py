@@ -1,3 +1,5 @@
+import queue
+
 from setup import *
 import imgrecg
 import win32gui
@@ -39,6 +41,7 @@ class appWindow:
         self.region = (0, 0, self.w, self.h)
         self.center = (int(self.w / 2), int(self.h / 2))
         self.regionWithoutStatus = (0, 53, self.w, self.h - 53)
+        self.eventQueue = queue.Queue()
 
 
 appWindow = appWindow()
