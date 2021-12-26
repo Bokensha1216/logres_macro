@@ -157,6 +157,7 @@ def goToNextQuest():
         wait(1)
         syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                         grayscale=True)
+    wait(0.5)
     click(syuppatu[0], syuppatu[1])
 
 
