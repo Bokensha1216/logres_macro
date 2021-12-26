@@ -132,8 +132,7 @@ def goToNextQuest():
     syuppatuRegion = convToRegion(289, 716, 474, 815)
     syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                     grayscale=True)
-    # x, y = (371, 763)
-    # pix = getPixel(x, y)
+
     while syuppatu is None:
         # もう一度挑戦ボタン
         mouichidoRegion = convToRegion(262, 762, 477, 881)
@@ -155,6 +154,7 @@ def goToNextQuest():
         syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                         grayscale=True)
     wait(0.5)
+    print(syuppatu, syuppatuRegion)
     click(syuppatu[0], syuppatu[1])
 
 
