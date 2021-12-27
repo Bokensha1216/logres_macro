@@ -49,9 +49,9 @@ def resizeImages():
         img = Image.open(imName)
         img_w, img_h = img.width * (Screen.w / myWidth), img.height * (Screen.h / myHeight)
         img_resize = img.resize((int(img_w), int(img_h)), Image.LANCZOS)
-        if imName[len(imageDic):] == "lv.bmp":
-            img.save(resizedDic + imName[len(imageDic):])
-            continue
+        # if imName[len(imageDic):] == "lv.bmp":
+        #     img.save(resizedDic + imName[len(imageDic):])
+        #     continue
         img_resize.save(resizedDic + imName[len(imageDic):])
 
 
