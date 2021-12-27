@@ -2,29 +2,30 @@ from PIL import Image, ImageDraw
 import numpy as np
 from setup import *
 import wrapping
+import win32gui
 
 
-def screenshot():
-    image = pyautogui.screenshot(region=Screen.region)
-
-    return image
-
-
-# 相対座標を入れる
-def getPixel(x, y):
-    image = screenshot()
-    return image.getpixel((x, y))
+# def screenshot():
+#     image = pyautogui.screenshot(region=Screen.region)
+#
+#     return image
 
 
-# 割合座標を入れる
-def getPixelRatio(x, y):
-    x, y = convRatioToRelative(x, y)
-    return getPixel(x, y)
+# # 相対座標を入れる
+# def getPixel(x, y):
+#     image = screenshot()
+#     return image.getpixel((x, y))
 
 
-def locateAll(image, confidence=0.65):
-    items = pyautogui.locateAllOnScreen(image, region=Screen.region, grayscale=True, confidence=confidence)
-    return items
+# # 割合座標を入れる
+# def getPixelRatio(x, y):
+#     x, y = convRatioToRelative(x, y)
+#     return getPixel(x, y)
+
+
+# def locateAll(image, confidence=0.65):
+#     items = pyautogui.locateAllOnScreen(image, region=Screen.region, grayscale=True, confidence=confidence)
+#     return items
 
 
 # def locatePixel(r=None, g=None, b=None):
@@ -53,7 +54,7 @@ def locateAll(image, confidence=0.65):
 
 # 要素が(x, y, w, h)
 def drawLocatedItems(items):
-    image = screenshot()
+    image = wrapping.screenshot()
     draw = ImageDraw.Draw(image)
     for item in items:
         itemCoor = convert(wrapping.RegionToPixel(item))
@@ -64,7 +65,7 @@ def drawLocatedItems(items):
 
 # 要素が(x, y)
 def drawLocatedItems2(items):
-    image = screenshot()
+    image = wrapping.screenshot()
     draw = ImageDraw.Draw(image)
     for item in items:
         item = (item[0], item[1], 10, 10)
@@ -76,10 +77,10 @@ def drawLocatedItems2(items):
 
 # 相対座標に変換かつ(x,y,w,h) から (x1,y1,x2,y2)に変換
 def convert(box):
-    x1 = box[0] - Screen.region[0]
-    y1 = box[1] - Screen.region[1]
-    x2 = x1 + box[2]
-    y2 = y1 + box[3]
+    x, y, w, h = wrapping.RegionToPixel(box)
+    x2, y2 = x+w, y+h
+    x1, y1 = win32gui.ScreenToClient(Screen.parent_handle, (x, y))
+    x2, y2 = win32gui.ScreenToClient(Screen.parent_handle, (x2, y2))
 
     boxConv = (x1, y1, x2, y2)
     return boxConv
