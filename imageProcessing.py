@@ -89,11 +89,22 @@ def ContourRectangle(image, lower, upper, show=False, offset=(0, 0)):
 
 
 def ImageRegionToVirtual(region, offset):
+    # offsetをクライアント座標に変換
+    offset = coordinateToPixelRelative(*offset)
     # 画像座標をクライアント座標に変換
     x, y, w, h = region[0] + offset[0], region[1] + offset[1], region[2], region[3]
-    # # クライアント座標を仮想座標に変換
-    # region = RegionClientToCoordinate((x, y, w, h))
-    region = (x, y, w, h)
+    # クライアント座標を仮想座標に変換
+    region = RegionClientToCoordinate((x, y, w, h))
+    return region
+
+
+def VirtualRegionToImage(region, offset):
+    # offsetをクライアント座標に変換
+    offset = coordinateToPixelRelative(*offset)
+    # 仮想座標をクライアント座標に変換
+    region = RegionCoordinateToClient(region)
+    # クライアント座標を画像座標に変換
+    region = (region[0] - offset[0], region[1] - offset[1], region[2], region[3])
     return region
 
 
@@ -106,7 +117,9 @@ def isInRegion(region, point, offset=(0, 0)):
     pass
 
 
-def drawOnImage(image, rectangles):
+def drawOnImage(image, rectangles, offset=(0, 0)):
+    rectangles = [VirtualRegionToImage(rectangle, offset) for rectangle in rectangles]
+
     image = pil2cv(image)
     for rec in rectangles:
         p1 = (rec[0], rec[1])

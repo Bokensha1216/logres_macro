@@ -36,6 +36,13 @@ def RegionClientToCoordinate(region):
     return region
 
 
+def RegionCoordinateToClient(region):
+    x, y = coordinateToPixelRelative(region[0], region[1])
+    w, h = coordinateToPixelRelative(region[2], region[3])
+    region = (x, y, w, h)
+    return region
+
+
 def locateCenterOnScreen(imageName, region, **kwargs):
     region = RegionToPixel(region)
     locatedItem = pyautogui.locateCenterOnScreen(imageName, region=region, **kwargs)
