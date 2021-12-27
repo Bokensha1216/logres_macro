@@ -37,7 +37,7 @@ offset = (0, appWindow.Status_y)
 ret = ContourRectangle(img, low, upper, show=False, offset=offset)
 drawOnImage(img2, ret)
 
-region = (0, 126, 500, 683)
+region = (0, 140, 500, 683)
 excRegion = (0, 181, 65, 54)
 ret = filterDetectedRec(ret, region, excRegion=excRegion)
 drawOnImage(img3, ret)
