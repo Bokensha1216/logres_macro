@@ -40,7 +40,8 @@ class appWindow:
         self.h = 900
         self.region = (0, 0, self.w, self.h)
         self.center = (int(self.w / 2), int(self.h / 2))
-        self.regionWithoutStatus = (0, 53, self.w, self.h - 53)
+        self.Status_y = 53
+        self.regionWithoutStatus = (0, self.Status_y, self.w, self.h - self.Status_y)
         self.eventQueue = queue.Queue()
 
 
