@@ -31,10 +31,16 @@ template = "images/lv.bmp"
 
 img = screenshot(region=appWindow.regionWithoutStatus)
 img2 = screenshot()
+img3 = copy.copy(img2)
 low, upper = (95, 70, 0), (255, 255, 5)
 offset = (0, appWindow.Status_y)
 ret = ContourRectangle(img, low, upper, show=False, offset=offset)
 drawOnImage(img2, ret)
+
+region = (0, 126, 500, 683)
+excRegion = (0, 181, 65, 54)
+ret = filterDetectedRec(ret, region, excRegion=excRegion)
+drawOnImage(img3, ret)
 # imgBin = showBitImage(img, low, upper)
 #
 # kernel = np.ones((8, 8), np.uint8)

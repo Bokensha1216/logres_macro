@@ -108,13 +108,26 @@ def VirtualRegionToImage(region, offset):
     return region
 
 
-def filterDetectedRec(detRecs, region, ExcRegion=None):
+def filterDetectedRec(detRecs, region, excRegion=None):
+    filDecRec = []
     for detRec in detRecs:
         center = (int(detRec[0] + detRec[2] / 2), int(detRec[1] + detRec[3] / 2))
+        if isInRegion(region, center):
+            filDecRec.append(detRec)
+
+            if excRegion is not None:
+                if isInRegion(excRegion, center):
+                    filDecRec.pop(-1)
+    return filDecRec
 
 
-def isInRegion(region, point, offset=(0, 0)):
-    pass
+def isInRegion(region, point):
+    x, y = point
+    x1, y1, x2, y2 = region[0], region[1], region[0] + region[2], region[1] + region[3]
+    if x1 < x < x2 and y1 < y < y2:
+        return True
+    else:
+        return False
 
 
 def drawOnImage(image, rectangles, offset=(0, 0)):
