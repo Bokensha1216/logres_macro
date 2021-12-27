@@ -15,6 +15,7 @@ import win32con
 
 import glob
 from PIL import Image
+import cv2
 
 
 # windowを見つけて選択状態にする
@@ -53,6 +54,18 @@ def resizeImages():
         #     img.save(resizedDic + imName[len(imageDic):])
         #     continue
         img_resize.save(resizedDic + imName[len(imageDic):])
+
+    # 2値画像用
+    imageDic = "glayImages/"
+    images = glob.glob(imageDic + "*.bmp")
+    resizedDic = "resizedImages/"
+    myWidth = 486
+    myHeight = 864
+    for imName in images:
+        img = cv2.imread(imName, 0)
+        img_resize = cv2.resize(img, dsize=None, fx=(Screen.w / myWidth), fy=(Screen.h / myHeight))
+        imgBin = cv2.inRange(img_resize, 1, 255)
+        cv2.imwrite(resizedDic + imName[len(imageDic):], imgBin)
 
 
 class Screen:

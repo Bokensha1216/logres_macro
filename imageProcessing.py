@@ -40,4 +40,9 @@ def detectTemplate(image, template, lower, upper, threshold, show=False):
     return itemList
 
 
-
+def showBitImage(image, lower, upper):
+    img = pil2cv(image)
+    imgBin = cv2.inRange(img, lower, upper)
+    cv2.imshow("bit", imgBin)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
