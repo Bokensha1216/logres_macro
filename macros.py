@@ -114,16 +114,6 @@ def startBattle():
                 pix = getPixel(x2, y2)
             break
 
-    # x, y = 340, 216
-    # click(x, y)
-    # wait(1.5)
-    # x2, y2 = 440, 790
-    # pix = getPixel(x2, y2)
-    # while pix[0] < 10:
-    #     wait(0.5)
-    #     click(x, y)
-    #     pix = getPixel(x2, y2)
-
     for i in range(5):
         wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760

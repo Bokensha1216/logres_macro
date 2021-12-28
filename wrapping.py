@@ -2,6 +2,15 @@ from coordinate import *
 
 
 def click(x, y):
+    if x < 0:
+        x = 0
+    if y < 0:
+        y = 0
+    if x > appWindow.w:
+        x = appWindow.w
+    if y > appWindow.h:
+        y = appWindow.h
+
     x, y = coordinateToPixelAbs(x, y)
     pyautogui.click(x, y)
 
