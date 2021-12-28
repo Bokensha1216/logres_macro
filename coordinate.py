@@ -1,7 +1,6 @@
 import queue
 
 from setup import *
-import imgrecg
 import win32gui
 
 
@@ -32,6 +31,13 @@ def convToRegion(x1, y1, x2, y2):
     h = y2 - y1
     region = (x, y, w, h)
     return region
+
+
+def RegionCenter(region):
+    x = int(region[0] + region[2] / 2)
+    y = int(region[1] + region[3] / 2)
+    center = (x, y)
+    return center
 
 
 class appWindow:

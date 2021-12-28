@@ -141,3 +141,75 @@ def drawOnImage(image, rectangles, offset=(0, 0)):
     cv2.imshow("draw", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+
+def drawSingleOnImage(image, rectangle, offset=(0, 0)):
+    image = pil2cv(image)
+    rec = VirtualRegionToImage(rectangle, offset)
+    p1 = (rec[0], rec[1])
+    p2 = (p1[0] + rec[2], p1[1] + rec[3])
+    cv2.rectangle(image, p1, p2, (0, 0, 255), 2)
+    cv2.imshow("draw", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+def detectLine(image, lower, upper, show=False, offset=(0, 0), tilt=(0, 0.3)):
+    # openCV型に変換
+    img = pil2cv(image)
+    # 2値化
+    imgBin = cv2.inRange(img, lower, upper)
+    # 縮小
+    kernel = np.ones((2, 2), np.uint8)
+    ero = cv2.erode(imgBin, kernel, iterations=1)
+    # 膨張
+    kernel = np.ones((5, 5), np.uint8)
+    dilation = cv2.dilate(ero, kernel, iterations=1)
+    # 直線検出
+    threshold = 50
+    minLineLength = 40
+    maxLineGap = 10
+    lines = cv2.HoughLinesP(dilation, rho=1, theta=np.pi / 360, threshold=threshold, minLineLength=minLineLength,
+                            maxLineGap=maxLineGap)
+    # 傾きでフィルター
+    lines = [line[0] for line in lines]
+    fil_lines = []
+    for line in lines:
+        x1, y1, x2, y2 = line
+        if x2-x1 == 0:
+            print("ゼロ除算")
+            continue
+        m = (y2-y1)/(x2-x1)
+        if tilt[0] - tilt[1] <= m <= tilt[0] + tilt[1]:
+            fil_lines.append(line)
+    lines = fil_lines
+
+    # 表示
+    if show is True:
+        lineImage = pil2cv(image)
+        for line in lines:
+            x1, y1, x2, y2 = line
+            # 赤線を引く
+            red_line_img = cv2.line(lineImage, (x1, y1), (x2, y2), (255, 0, 0), 3)
+        cv2.imshow("draw", lineImage)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    # 変換して返還
+    lines = [convToRegion(x1, y1, x2, y2) for x1, y1, x2, y2 in lines]
+    lines = [ImageRegionToVirtual(line, offset) for line in lines]
+    return lines
+
+
+def mergeLines(lines, distance=50):
+    mergedLines = [lines.pop(0)]
+    while len(lines) > 0:
+        line = lines.pop(0)
+        flag = False
+        for i, ml in enumerate(mergedLines):
+            if abs(ml[1] - line[1]) <= distance:
+                mergedLines[i] = (min(ml[0], line[0]), min(ml[1], line[1]), max(ml[2], line[2]), max(ml[3], line[3]))
+                flag = True
+                break
+        if flag is False:
+            mergedLines.append(line)
+    return mergedLines
