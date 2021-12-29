@@ -94,7 +94,8 @@ def traceEnemy(enemyList):
         return
 
     except CannotFindException:
-        locateEnemy(limitRange=False)
+        enemyList = locateEnemy(limitRange=False)
+        traceEnemy(enemyList)
 
 
 def battle():
