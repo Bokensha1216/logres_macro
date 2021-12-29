@@ -42,7 +42,11 @@ def showContours(img, contours):
 findWindow()
 # img = cv2.imread('images/wolflv.bmp', 0)
 # img = Image.open("images/test.bmp")
-elist = locateEnemy(limitRange=False, locateRange=140, show=True)
+img = screenshot()
+low, upper = (105, 70, 0), (240, 200, 5)
+cv2.imshow("ori", pil2cv(img))
+showBitImage(img, low, upper)
+# elist = locateEnemy(limitRange=False, locateRange=140, show=True)
 # macros.traceEnemy(elist)
 
 # imgori = screenshot()

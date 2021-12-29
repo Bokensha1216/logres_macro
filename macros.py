@@ -35,7 +35,7 @@ def locateQuestNavi():
 
 def locateEnemy(limitRange=True, locateRange=100, locateCenter=None, show=False):
     img = screenshot(appWindow.regionWithoutStatus)
-    low, upper = (95, 70, 0), (255, 255, 5)
+    low, upper = (105, 70, 0), (240, 200, 5)
     offset = (0, appWindow.Status_y)
     ret = ContourRectangle(img, low, upper, show=False, offset=offset)
     region = (0, 140, 500, 683)
