@@ -5,20 +5,21 @@ import macros
 from coordinate import *
 import wrapping
 from exception import *
+from observer import *
 
 
 def syukaiQuest(questTimes, useQuestNavi=False):
     def syukaiQuestThread():
-
         findWindow()
-        # image = "resizedImages/navi.png"
-        # items = wrapping.locateAllOnScreen(image, region=appWindow.region, confidence=0.65)
-        # imgrecg.drawLocatedItems(items)
 
         try:
             questLoop(questTimes, useQuestNavi)
         except FinishButtonException as e:
             print(e)
+            print("スレッドを終了")
+        except Exception as e:
+            print(e)
+            sendMessage(FinishButtonException())
             print("スレッドを終了")
 
     print("makeMainThread")
@@ -27,68 +28,6 @@ def syukaiQuest(questTimes, useQuestNavi=False):
     return mainThread
 
 
-# def questLoop(questTimes, useQuestNavi):
-#     for questTime in range(questTimes):
-#         # クエスト開始
-#         print("startQuest")
-#
-#         # クエストナビ検出
-#         if useQuestNavi is True:
-#             navi = findNavi()
-#         else:
-#             navi = None
-#
-#         # 初回敵検出
-#         print("locateEnemy")
-#         enemylist = macros.locateEnemy(limitRange=useQuestNavi, locateRange=150, locateCenter=navi)
-#         while len(enemylist) == 0:
-#             print("a")
-#             macros.wait(0.5)
-#             enemylist = macros.locateEnemy(limitRange=useQuestNavi, locateRange=150, locateCenter=navi)
-#         # print(enemylist)
-#
-#         # クエストクリアまで
-#         while True:
-#             # 敵追跡
-#             print("traceEnemy")
-#             macros.traceEnemy(enemylist)
-#
-#             macros.wait(1)
-#
-#             # 戦闘開始
-#             macros.startBattle()
-#             macros.wait(12)
-#             while macros.isInBattle():
-#                 # print(macros.isInBattle())
-#                 macros.wait(1)
-#
-#             # 戦闘終了
-#             print("waitfield")
-#             macros.waitField()
-#             macros.wait(1.5)
-#             if macros.questCleared():
-#                 break
-#
-#             macros.wait(1.5)
-#             if macros.questCleared():
-#                 break
-#             # 敵検出
-#             enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
-#             while len(enemylist) == 0:
-#                 print("notFoundEnemy")
-#                 macros.wait(0.5)
-#                 enemylist = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
-#             if macros.questCleared():
-#                 break
-#
-#         # クエストクリア
-#         macros.wait(0.5)
-#         print("questclear")
-#         macros.goToNextQuest()
-#         macros.wait(4)
-#         macros.waitField()
-#         print("next")
-#         macros.wait(4)
 
 def questLoop(questTimes, useQuestNavi):
     for questTime in range(questTimes):
@@ -110,6 +49,7 @@ def questLoop(questTimes, useQuestNavi):
 def firstLocateEnemy(useQuestNavi):
     try:
         print("firstLocateEnemy")
+        sendMessage(Macro.FIRST_LOCATE_ENEMY)
 
         def findNavi():
             navi = macros.locateQuestNavi()
@@ -136,6 +76,8 @@ def firstLocateEnemy(useQuestNavi):
         return enemylist
     except SkipException:
         return None
+    except CannotFindException as e:
+        raise e
 
 
 def traceEnemy(enemyList):
@@ -144,16 +86,21 @@ def traceEnemy(enemyList):
             raise SkipException
         # 敵追跡
         print("traceEnemy")
+        sendMessage(Macro.TRACE_ENEMY)
         macros.traceEnemy(enemyList)
 
         macros.wait(1)
     except SkipException:
         return
 
+    except CannotFindException:
+        locateEnemy(limitRange=False)
+
 
 def battle():
     try:
         print("battle")
+        sendMessage(Macro.BATTLE)
         # 戦闘開始
         macros.startBattle()
         macros.wait(12)
@@ -167,11 +114,15 @@ def battle():
         macros.wait(1.5)
     except SkipException:
         return
+    except BattleNotFinish:
+        macros.run()
+        macros.wait(1.5)
 
 
 def checkQuestClear():
     try:
         print("checkQuestClear")
+        sendMessage(Macro.CHECK_QUEST_CLEAR)
         if macros.questCleared():
             print("questclear")
             return True
@@ -188,15 +139,16 @@ def checkQuestClear():
             return False
 
 
-def locateEnemy():
+def locateEnemy(limitRange=True):
     try:
         print("LocateEnemy")
+        sendMessage(Macro.LOCATE_ENEMY)
         # 敵検出
-        enemyList = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
+        enemyList = macros.locateEnemy(limitRange, locateRange=150, locateCenter=appWindow.center)
         while len(enemyList) == 0:
             print("notFoundEnemy")
             macros.wait(0.5)
-            enemyList = macros.locateEnemy(limitRange=True, locateRange=150, locateCenter=appWindow.center)
+            enemyList = macros.locateEnemy(limitRange, locateRange=150, locateCenter=appWindow.center)
 
         return enemyList
     except SkipException:
@@ -206,6 +158,7 @@ def locateEnemy():
 def nextQuest():
     try:
         print("nextQuest")
+        sendMessage(Macro.NEXT_QUEST)
         macros.wait(0.5)
         macros.goToNextQuest()
         macros.wait(4)
@@ -213,3 +166,7 @@ def nextQuest():
         macros.wait(4)
     except SkipException:
         return
+
+
+def sendMessage(msg):
+    appWindow.observer.eventQueue.put(msg)

@@ -47,6 +47,7 @@ if __name__ == "__main__":
         try:
             if mainThread.is_alive():
                 appWindow.eventQueue.put(FinishButtonException())
+                appWindow.observer.eventQueue.put(FinishButtonException())
                 if checkMacroThread.is_alive():
                     messageLabel["text"] = "マクロ終了中"
             else:

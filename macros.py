@@ -136,6 +136,12 @@ def startBattle():
                 cnts = detectContour(img, lower, upper)
 
 
+def run():
+    click(440, 865)
+    wait(1)
+    click(250, 538)
+
+
 # 武器が選択されているか
 def isSelected(contours, areaThr=25):
     areaThr = convAreaToScreen(areaThr)
