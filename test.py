@@ -41,16 +41,14 @@ def showContours(img, contours):
 
 findWindow()
 # img = cv2.imread('images/wolflv.bmp', 0)
-img = Image.open("images/test.bmp")
-region = (13, 721, 68, 71)
+# img = Image.open("images/test.bmp")
+elist = locateEnemy(limitRange=False, locateRange=140, show=True)
+# macros.traceEnemy(elist)
+
 # imgori = screenshot()
 # img = pil2cv(imgori)
 # cv2.imwrite("images/test.bmp", img)
-# lower, upper = (100, 70, 0), (110, 90, 0)
-# offset = (0, appWindow.Status_y)
-# recs = ContourRectangle(img, lower, upper, offset=offset, show=True)
-# for rec in recs:
-#     print(rec[2] * rec[3])
+
 
 
 # cnts = detectContour(imgori, lower, upper)

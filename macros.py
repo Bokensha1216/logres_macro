@@ -33,7 +33,7 @@ def locateQuestNavi():
 #
 #     return enemyList
 
-def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
+def locateEnemy(limitRange=True, locateRange=100, locateCenter=None, show=False):
     img = screenshot(appWindow.regionWithoutStatus)
     low, upper = (95, 70, 0), (255, 255, 5)
     offset = (0, appWindow.Status_y)
@@ -51,6 +51,10 @@ def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
 
         enemies = filterDetectedRec(enemies, region)
 
+    if show:
+        img = screenshot()
+        drawOnImage(img, enemies)
+
     enemyList = [(eX, eY + 45) for eX, eY, _, _ in enemies]
 
     return enemyList
@@ -67,8 +71,8 @@ def goToNearestEnemy(enemyList):
 
     nearestEnemy = min(distances)
     direction = imgrecg.direction_vec(appWindow.center, nearestEnemy)
-    clickPoint = nearestEnemy + direction * 30
-    click(clickPoint[0], clickPoint[1])
+    clickPoint = (nearestEnemy + direction * 20)
+    click(int(clickPoint[0]), int(clickPoint[1]))
     return nearestEnemy
 
 
