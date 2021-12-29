@@ -111,7 +111,10 @@ class Observer(threading.Thread):
                             time.sleep(1)
                             time_end = time.time()
                             keika = time_end - time_sta
-                            if keika > 40:
+                            if keika > 30:
+                                if macros.isInField():
+                                    appWindow.eventQueue.put(NextAlreadyStarted())
+                                    break
                                 nextQuestCount += 1
                                 if nextQuestCount <= 2:
                                     appWindow.eventQueue.put(NextQuestNotStart())

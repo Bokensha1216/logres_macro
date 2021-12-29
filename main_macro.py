@@ -179,6 +179,8 @@ def nextQuest():
             raise e
         else:
             nextQuest()
+    except NextAlreadyStarted:
+        return
 
 
 def sendMessage(msg):

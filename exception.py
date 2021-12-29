@@ -42,3 +42,8 @@ class NextQuestNotStart(MyException):
 class NotInBattle(MyException):
     def __str__(self):
         return "戦闘していません"
+
+
+class NextAlreadyStarted(MyException):
+    def __str__(self):
+        return "既に次のクエストです"

@@ -185,6 +185,16 @@ def waitField(sec=0.2):
                                     grayscale=True)
 
 
+def isInField():
+    region = convToRegion(263, 0, 378, 104)
+    friendIcon = locateOnScreen("resizedImages/people.bmp", region=region, confidence=0.65,
+                                grayscale=True)
+    if friendIcon is None:
+        return False
+    else:
+        return True
+
+
 def questCleared():
     img = screenshot(region=appWindow.regionWithoutStatus)
     lower, upper = (100, 70, 0), (110, 90, 0)
