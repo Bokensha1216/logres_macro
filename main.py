@@ -5,6 +5,7 @@ import tkinter as tk
 import main_macro
 from exception import *
 from coordinate import *
+from observer import *
 
 if __name__ == "__main__":
     global mainThread, checkMacroThread
@@ -29,6 +30,8 @@ if __name__ == "__main__":
                 mainThread = main_macro.syukaiQuest(questTimes)
                 checkMacroThread = threading.Thread(target=checkMacro)
                 checkMacroThread.start()
+                appWindow.observer = Observer()
+                appWindow.observer.start()
 
             try:
                 if mainThread.is_alive():

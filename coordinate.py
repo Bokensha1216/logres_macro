@@ -61,6 +61,7 @@ class appWindow:
         self.Status_y = 53
         self.regionWithoutStatus = (0, self.Status_y, self.w, self.h - self.Status_y)
         self.eventQueue = queue.Queue()
+        self.observer = None
 
 
 appWindow = appWindow()
