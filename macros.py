@@ -78,7 +78,7 @@ def goToNearestEnemy(enemyList):
 
 def traceEnemy(enemyList):
     clickedPoint = goToNearestEnemy(enemyList)
-    wait(0.5)
+    wait(1)
 
     while not isInBattle():
         enemyList = locateEnemy(limitRange=True, locateRange=140, locateCenter=clickedPoint)
@@ -89,7 +89,7 @@ def traceEnemy(enemyList):
                 return
 
         clickedPoint = goToNearestEnemy(enemyList)
-        wait(0.5)
+        wait(1)
 
 
 def isInBattle():
@@ -99,7 +99,7 @@ def isInBattle():
     return clock is not None
 
 
-def startBattle():
+def startBattle(checkClick=False):
     wait(4.5)
     while isInBattle():
         try:
@@ -121,12 +121,12 @@ def startBattle():
                     return
             break
 
-    wait(0.5)
+    wait(1.0)
     for i in range(5):
         wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760
         click(clickPosX, clickPosY)
-        if i == 0:
+        if i == 0 and checkClick is True:
             wait(0.5)
             region = (13, 721, 68, 71)
             img = screenshot(region)
@@ -215,7 +215,7 @@ def goToNextQuest():
                                          grayscale=True)
         if mouichido is not None:
             click(mouichido[0], mouichido[1])
-            wait(2)
+            wait(3)
 
         # 開封ボタン
         kaihu = locateCenterOnScreen("resizedImages/kaihu.bmp", region=appWindow.regionWithoutStatus, confidence=0.7,
