@@ -40,6 +40,18 @@ def RegionCenter(region):
     return center
 
 
+def convAreaToScreen(area):
+    s_area = Screen.w * Screen.h
+    v_area = appWindow.w * appWindow.h
+    return area * (s_area / v_area)
+
+
+def convAreaToVirtual(area):
+    s_area = Screen.w * Screen.h
+    v_area = appWindow.w * appWindow.h
+    return area * (v_area / s_area)
+
+
 class appWindow:
     def __init__(self):
         self.w = 500

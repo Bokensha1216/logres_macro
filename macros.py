@@ -126,6 +126,20 @@ def startBattle():
                 click(clickPosX, clickPosY)
 
 
+# 武器が選択されているか
+def isSelected(contours, areaThr=10):
+    areaThr = convAreaToScreen(areaThr)
+    if len(contours) >= 45:
+        return False
+    else:
+        for cnt in contours:
+            # area = cv2.contourArea(cnt)
+            # print(convAreaToVirtual(area))
+            if cv2.contourArea(cnt) > areaThr:
+                return True
+        return False
+
+
 def EnemyPosOnBattle():
     img = screenshot(region=appWindow.regionWithoutStatus)
     low, upper = (0, 0, 0), (255, 0, 255)

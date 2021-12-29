@@ -176,10 +176,10 @@ def detectLine(image, lower, upper, show=False, offset=(0, 0), tilt=(0, 0.3)):
     fil_lines = []
     for line in lines:
         x1, y1, x2, y2 = line
-        if x2-x1 == 0:
+        if x2 - x1 == 0:
             print("ゼロ除算")
             continue
-        m = (y2-y1)/(x2-x1)
+        m = (y2 - y1) / (x2 - x1)
         if tilt[0] - tilt[1] <= m <= tilt[0] + tilt[1]:
             fil_lines.append(line)
     lines = fil_lines
@@ -213,3 +213,10 @@ def mergeLines(lines, distance=50):
         if flag is False:
             mergedLines.append(line)
     return mergedLines
+
+
+def detectContour(image, lower, upper):
+    img = pil2cv(image)
+    bit = cv2.inRange(img, lower, upper)
+    contours, hierarchy = cv2.findContours(bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return contours
