@@ -119,17 +119,23 @@ def startBattle():
         clickPosX, clickPosY = 50 + 80 * i, 760
         click(clickPosX, clickPosY)
         if i == 0:
-            wait(0.3)
-            region = convToRegion(0, 669, 157, 836)
-            while locateOnScreen("resizedImages/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
-                wait(0.2)
+            wait(0.5)
+            region = (13, 721, 68, 71)
+            img = screenshot(region)
+            lower, upper = (150, 255, 255), (255, 255, 255)
+            cnts = detectContour(img, lower, upper)
+            while isSelected(cnts) is False:
+                print(isSelected(cnts))
                 click(clickPosX, clickPosY)
+                wait(0.5)
+                img = screenshot(region)
+                cnts = detectContour(img, lower, upper)
 
 
 # 武器が選択されているか
-def isSelected(contours, areaThr=10):
+def isSelected(contours, areaThr=25):
     areaThr = convAreaToScreen(areaThr)
-    if len(contours) >= 45:
+    if len(contours) >= 40:
         return False
     else:
         for cnt in contours:
@@ -166,10 +172,15 @@ def waitField(sec=0.2):
 
 
 def questCleared():
-    q = locateOnScreen("resizedImages/ku.bmp", region=appWindow.regionWithoutStatus, confidence=0.6,
-                       grayscale=True)
+    img = screenshot(region=appWindow.regionWithoutStatus)
+    lower, upper = (100, 70, 0), (110, 90, 0)
+    offset = (0, appWindow.Status_y)
+    recs = ContourRectangle(img, lower, upper, offset=offset)
+    for rec in recs:
+        if rec[2] * rec[3] > 10000:
+            return True
 
-    return q is not None
+    return False
 
 
 def goToNextQuest():

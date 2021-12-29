@@ -1,6 +1,7 @@
 # import numpy as np
 import pyautogui
 
+import macros
 from setup import *
 from wrapping import *
 from imageProcessing import *
@@ -35,21 +36,36 @@ def showContours(img, contours):
         cv2.rectangle(showImage, p1, p2, (0, 0, 255), 2)
     cv2.imshow("cont", showImage)
 
+    return detectedRectangles
+
 
 findWindow()
 # img = cv2.imread('images/wolflv.bmp', 0)
-# img = Image.open("images/test.bmp")
-region = (93, 731, 64, 63)
-imgori = screenshot(region)
-# img = pil2cv(img)
+img = Image.open("images/test.bmp")
+region = (13, 721, 68, 71)
+# imgori = screenshot()
+# img = pil2cv(imgori)
+# cv2.imwrite("images/test.bmp", img)
+# lower, upper = (100, 70, 0), (110, 90, 0)
+# offset = (0, appWindow.Status_y)
+# recs = ContourRectangle(img, lower, upper, offset=offset, show=True)
+# for rec in recs:
+#     print(rec[2] * rec[3])
 
-lower, upper = (220, 255, 255), (255, 255, 255)
-cnts = detectContour(imgori, lower, upper)
-for cnt in cnts:
-    area = cv2.contourArea(cnt)
-    print(convAreaToVirtual(area))
-print(len(cnts))
-print(isSelected(cnts))
+
+# cnts = detectContour(imgori, lower, upper)
+# for cnt in cnts:
+#     area = cv2.contourArea(cnt)
+#     print(convAreaToVirtual(area))
+# cnts = list(filter(lambda x: 60 >= cv2.contourArea(x) >= 20, cnts))
+# sikaku = showContours(img, cnts)
+# # print(len(cnts))
+# # print(isSelected(cnts))
+# for detectedRectangle in sikaku:
+#     p1 = (detectedRectangle[0], detectedRectangle[1])
+#     p2 = (p1[0] + detectedRectangle[2], p1[1] + detectedRectangle[3])
+#     cv2.rectangle(bit, p1, p2, (255, 255, 255), -1)
+# cv2.imshow("bit2", bit)
 
 # img = pil2cv(imgori)
 # bit = cv2.inRange(img, lower, upper)
@@ -180,5 +196,5 @@ print(isSelected(cnts))
 # # #
 # # #
 # # #
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+cv2.waitKey(0)
+cv2.destroyAllWindows()
