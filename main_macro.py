@@ -28,7 +28,6 @@ def syukaiQuest(questTimes, useQuestNavi=False):
     return mainThread
 
 
-
 def questLoop(questTimes, useQuestNavi):
     for questTime in range(questTimes):
         enemyList = firstLocateEnemy(useQuestNavi)
@@ -93,7 +92,9 @@ def traceEnemy(enemyList):
     except SkipException:
         return
 
-    except CannotFindException:
+    except CannotFindException as e:
+        print(e, end="")
+        print(" : 範囲を広げます")
         enemyList = locateEnemy(limitRange=False)
         traceEnemy(enemyList)
 
@@ -115,9 +116,13 @@ def battle():
         macros.wait(1.5)
     except SkipException:
         return
-    except BattleNotFinish:
+    except BattleNotFinish as e:
+        print(e, end="")
+        print(" : 逃げます")
         macros.run()
         macros.wait(1.5)
+    except NotInBattle:
+        return
 
 
 def checkQuestClear():
@@ -154,6 +159,8 @@ def locateEnemy(limitRange=True):
         return enemyList
     except SkipException:
         return None
+    except CannotFindException as e:
+        raise e
 
 
 def nextQuest():
@@ -167,6 +174,11 @@ def nextQuest():
         macros.wait(4)
     except SkipException:
         return
+    except NextQuestNotStart as e:
+        if hasattr(e, "raiseExcept"):
+            raise e
+        else:
+            nextQuest()
 
 
 def sendMessage(msg):

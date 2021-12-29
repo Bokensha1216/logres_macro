@@ -101,7 +101,7 @@ def isInBattle():
 
 def startBattle():
     wait(4.5)
-    while True:
+    while isInBattle():
         try:
             enemyPos = EnemyPosOnBattle()
         except IndexError:
@@ -116,8 +116,12 @@ def startBattle():
                 click(x, y)
                 wait(0.5)
                 pix = getPixel(x2, y2)
+
+                if not isInBattle():
+                    return
             break
 
+    wait(0.5)
     for i in range(5):
         wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760

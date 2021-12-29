@@ -3,28 +3,42 @@ class FinishButtonException(Exception):
         return "終了ボタン押下"
 
 
-class SkipException(Exception):
-    def __str__(self, **kwargs):
+class MyException(Exception):
+    def __init__(self, **kwargs):
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+
+class SkipException(MyException):
+    def __str__(self):
         return "次の処理にスキップ"
 
 
-class HasEvent(Exception):
+class HasEvent(MyException):
     def __str__(self):
         return "イベントあり"
 
 
-class CannotFindException(Exception):
+class CannotFindException(MyException):
     def __str__(self):
         return "敵が見つかりません"
 
 
-class QuestNotFinish(Exception):
+class QuestNotFinish(MyException):
     def __str__(self):
         return "クエストが終了しません"
 
 
-class BattleNotFinish(Exception):
+class BattleNotFinish(MyException):
     def __str__(self):
         return "バトルが終了しません"
+
+
+class NextQuestNotStart(MyException):
+    def __str__(self):
+        return "次のクエストが開始しません"
+
+
+class NotInBattle(MyException):
+    def __str__(self):
+        return "戦闘していません"

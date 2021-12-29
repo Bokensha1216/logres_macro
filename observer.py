@@ -4,6 +4,7 @@ from enum import Flag, auto
 
 from coordinate import *
 from exception import *
+import macros
 
 
 class Observer(threading.Thread):
@@ -20,14 +21,17 @@ class Observer(threading.Thread):
             print("finish observer")
 
     def observe(self):
+        loopCount = 0
+        nextQuestCount = 0
         while True:
-            loopCount = 0
             event = self.eventQueue.get()
             if isinstance(event, FinishButtonException):
                 raise event
             else:
                 if event == Macro.FIRST_LOCATE_ENEMY:
                     print(event.name)
+                    loopCount = 0
+                    nextQuestCount = 0
                     time_sta = time.time()
                     while True:
                         try:
@@ -68,8 +72,11 @@ class Observer(threading.Thread):
                             time.sleep(1)
                             time_end = time.time()
                             keika = time_end - time_sta
-                            if keika > 90:
-                                appWindow.eventQueue.put(BattleNotFinish())
+                            if keika > 100:
+                                if not macros.isInBattle():
+                                    appWindow.eventQueue.put(NotInBattle())
+                                else:
+                                    appWindow.eventQueue.put(BattleNotFinish())
 
                 if event == Macro.CHECK_QUEST_CLEAR:
                     print(event.name)
@@ -79,9 +86,37 @@ class Observer(threading.Thread):
 
                 if event == Macro.LOCATE_ENEMY:
                     print(event.name)
+                    time_sta = time.time()
+                    while True:
+                        try:
+                            self.checkEvent()
+                        except HasEvent:
+                            break
+                        else:
+                            time.sleep(1)
+                            time_end = time.time()
+                            keika = time_end - time_sta
+                            if keika > 40:
+                                appWindow.eventQueue.put(CannotFindException())
 
                 if event == Macro.NEXT_QUEST:
                     print(event.name)
+                    time_sta = time.time()
+                    while True:
+                        try:
+                            self.checkEvent()
+                        except HasEvent:
+                            break
+                        else:
+                            time.sleep(1)
+                            time_end = time.time()
+                            keika = time_end - time_sta
+                            if keika > 30:
+                                nextQuestCount += 1
+                                if nextQuestCount <= 2:
+                                    appWindow.eventQueue.put(NextQuestNotStart())
+                                else:
+                                    appWindow.eventQueue.put(NextQuestNotStart(raiseExcept=True))
 
     def checkEvent(self):
         if self.eventQueue.qsize() != 0:
