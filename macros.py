@@ -209,7 +209,7 @@ def isInField():
 def isInHome():
     region = (360, 0, 69, 51)
     takara = locateOnScreen("resizedImages/takara.bmp", region=region, confidence=0.65,
-                                grayscale=True)
+                            grayscale=True)
     if takara is None:
         return False
     else:
@@ -229,38 +229,31 @@ def questCleared():
 
 
 def goToNextQuest():
+    def detectButton(areaMin, areaMax):
+        img = screenshot(region=(24, 692, 452, 176))
+        offset = (24, 692)
+        prmMin, prmMax = 200, 400
+        contours = detectContourFromEdge(img, prmMin, prmMax)
+        fil_contours = list(filter(lambda x: areaMax >= convAreaToVirtual(cv2.contourArea(x)) >= areaMin, contours))
+        recs = ContoursToVirtualRectangles(fil_contours, offset=offset)
+        recs = list(filter(lambda x: 3 >= x[2] / (x[3] + 0.1) >= 2, recs))
+        recs = list(filter(lambda x: 9000 >= x[2] * x[3] >= 5000, recs))
+        return recs
+
     # もう一回ボタン
     click(157, 541)
-    wait(5)
+    wait(7)
 
-    # 出発ボタン
-    syuppatuRegion = convToRegion(289, 716, 474, 815)
-    syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
-                                    grayscale=True)
+    # 一番右のボタンをフィールドに戻るまで押す
+    while not isInField():
+        buttons = detectButton(5000, 9000)
+        print(len(buttons))
 
-    while syuppatu is None:
-        # もう一度挑戦ボタン
-        mouichidoRegion = convToRegion(262, 762, 477, 881)
-        print("checkmouichido")
-        mouichido = locateCenterOnScreen("resizedImages/mouichido.bmp", region=mouichidoRegion, confidence=0.7,
-                                         grayscale=True)
-        if mouichido is not None:
-            click(mouichido[0], mouichido[1])
-            wait(3)
-
-        # 開封ボタン
-        kaihu = locateCenterOnScreen("resizedImages/kaihu.bmp", region=appWindow.regionWithoutStatus, confidence=0.7,
-                                     grayscale=True)
-        if kaihu is not None:
-            click(kaihu[0], kaihu[1])
-            wait(1)
-
-        wait(1)
-        syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
-                                        grayscale=True)
-    wait(0.5)
-    # print(syuppatu, syuppatuRegion)
-    click(393, 773)
+        if 2 <= len(buttons) <= 3:
+            buttonCenters = [RegionCenter(button) for button in buttons]
+            x, y = max(buttonCenters, key=lambda center: center[0])
+            click(x, y)
+        wait(3)
 
 
 def wait(sec):

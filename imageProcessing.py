@@ -220,3 +220,50 @@ def detectContour(image, lower, upper):
     bit = cv2.inRange(img, lower, upper)
     contours, hierarchy = cv2.findContours(bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     return contours
+
+
+def detectEdge(image, prmMin, prmMax, show=False):
+    img = pil2cv(image)
+    edges = cv2.Canny(img, prmMin, prmMax)
+    if show:
+        cv2.imshow("edge", edges)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    return edges
+
+
+def detectContourFromEdge(image, prmMin, prmMax, kernel=3, show=False, external=True):
+    # エッジ検出
+    edge = detectEdge(image, prmMin, prmMax, show=show)
+    # 膨張
+    kernel = np.ones((3, 3), np.uint8)
+    dil = cv2.dilate(edge, kernel, iterations=1)
+    # 輪郭検出
+    mode = cv2.RETR_EXTERNAL if external else cv2.RETR_LIST
+    contours, hierarchy = cv2.findContours(dil, mode, cv2.CHAIN_APPROX_SIMPLE)
+    if show:
+        cv2.imshow("dil", dil)
+        showContours(image, contours)
+    return contours
+
+
+def showContours(img, contours):
+    detectedRectangles = []
+    for label in contours:
+        detectedRectangle = cv2.boundingRect(label)
+        detectedRectangles.append(detectedRectangle)
+    # 表示
+    showImage = pil2cv(img)
+    for detectedRectangle in detectedRectangles:
+        p1 = (detectedRectangle[0], detectedRectangle[1])
+        p2 = (p1[0] + detectedRectangle[2], p1[1] + detectedRectangle[3])
+        cv2.rectangle(showImage, p1, p2, (255, 0, 0), 2)
+    cv2.imshow("cont", showImage)
+
+    return detectedRectangles
+
+
+def ContoursToVirtualRectangles(contours, offset=(0, 0)):
+    recs = [cv2.boundingRect(cnt) for cnt in contours]
+    recs = [ImageRegionToVirtual(rec, offset) for rec in recs]
+    return recs

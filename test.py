@@ -10,42 +10,41 @@ import copy
 from macros import *
 from imgrecg import *
 
-
-# findWindow()
-
-# for i in range(5):
-#     wait(0.1)
-#     clickPosX, clickPosY = 50 + 80 * i, 760
-#     click(clickPosX, clickPosY)
-#     if i == 0:
-#         wait(0.3)
-#         region = convToRegion(0, 669, 157, 836)
-#         while locateOnScreen("resizedImages/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
-#             wait(0.2)
-#             click(clickPosX, clickPosY)
-
-def showContours(img, contours):
-    detectedRectangles = []
-    for label in contours:
-        detectedRectangle = cv2.boundingRect(label)
-        detectedRectangles.append(detectedRectangle)
-    # 表示
-    showImage = pil2cv(img)
-    for detectedRectangle in detectedRectangles:
-        p1 = (detectedRectangle[0], detectedRectangle[1])
-        p2 = (p1[0] + detectedRectangle[2], p1[1] + detectedRectangle[3])
-        cv2.rectangle(showImage, p1, p2, (0, 0, 255), 2)
-    cv2.imshow("cont", showImage)
-
-    return detectedRectangles
-
-
 findWindow()
+
+for i in range(5):
+    wait(0.1)
+    clickPosX, clickPosY = 50 + 80 * i, 760
+    click(clickPosX, clickPosY, check=True)
+    if i == 0:
+        wait(0.3)
+        region = convToRegion(0, 669, 157, 836)
+        while locateOnScreen("resizedImages/one.bmp", region=region, grayscale=True, confidence=0.7) is None:
+            wait(0.2)
+            click(clickPosX, clickPosY)
+
 # img = cv2.imread('images/wolflv.bmp', 0)
-# img = Image.open("images/test.bmp")
-img = screenshot()
-elist = locateEnemy(limitRange=False)
-goToNearestEnemy(elist)
+# click(131, 532, check=True)
+
+# img = Image.open("images/test1.bmp")
+# img = img.crop((region[0], region[1], region[0]+region[2], region[1]+region[3]))
+# prmMin, prmMax = 200, 400
+# contours = detectContourFromEdge(img, prmMin, prmMax, show=True)
+# print(len(contours))
+# showContours(img, contours)
+# recs = ContoursToVirtualRectangles(contours, offset=(24, 692))
+# recs = list(filter(lambda x: 3 >= x[2]/(x[3]+0.1) >= 2, recs))
+# recs = list(filter(lambda x: 10000 >= x[2]*x[3] >= 5000, recs))
+# for rec in recs:
+#     print(rec, rec[2]*rec[3])
+# fil_contours = list(filter(lambda x: areaMax >= convAreaToVirtual(cv2.contourArea(x)) >= areaMin, contours))
+# recs = ContoursToVirtualRectangles(fil_contours, offset=(0, 0))
+# return recs
+# showImage = copy.copy(img)
+
+# img = screenshot()
+# elist = locateEnemy(limitRange=False)
+# goToNearestEnemy(elist)
 # low, upper = (105, 70, 0), (240, 200, 5)
 # cv2.imshow("ori", pil2cv(img))
 # showBitImage(img, low, upper)
@@ -139,7 +138,15 @@ goToNearestEnemy(elist)
 # cv2.imshow("bruh", dst)
 
 # edges = cv2.Canny(img,600,1000)
-# # edges = cv2.Canny(img,800,900)
+# prmMin, prmMax = 200, 400
+# contours = detectContourFromEdge(img, prmMin, prmMax)
+# fil_contours = list(filter(lambda x: 9000 >= convAreaToVirtual(cv2.contourArea(x)) >= 3000, contours))
+# recs = ContoursToVirtualRectangles(fil_contours)
+# mouichidoRegion = (0, 634, 500, 260)
+# recs = filterDetectedRec(recs, mouichidoRegion)
+# print(recs)
+# showContours(img, contours)
+# detectedRectangles = []
 # #
 # cv2.imshow("aa", img)
 # cv2.imshow("edge", edges)
@@ -175,11 +182,17 @@ goToNearestEnemy(elist)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 #
-# fil_contours = list(filter(lambda x: 280 >= cv2.contourArea(x) >= 100, contours))
+# fil_contours = list(filter(lambda x: 9000 >= cv2.contourArea(x) >= 3000, contours))
 # for i, cnt in enumerate(fil_contours):
 #     # 輪郭の面積を計算する。
 #     area = cv2.contourArea(cnt)
-#     print(f"contour: {i}, area: {area}")
+#     print(f"contour: {i}, area: {area}, Varea: {convAreaToVirtual(area)}")
+# showContours(showImage, fil_contours)
+# for label in fil_contours:
+#     detectedRectangle = cv2.boundingRect(label)
+#     detectedRectangles.append(detectedRectangle)
+# print(detectedRectangles)
+
 # detectedRectangles = []
 # for label in fil_contours:
 #     detectedRectangle = cv2.boundingRect(label)

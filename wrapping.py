@@ -1,7 +1,8 @@
 from coordinate import *
+from observer import ClickChecker
 
 
-def click(x, y):
+def click(x, y, check=False):
     if x < 0:
         x = 0
     if y < 0:
@@ -10,6 +11,10 @@ def click(x, y):
         x = appWindow.w
     if y > appWindow.h:
         y = appWindow.h
+
+    if check:
+        checker = ClickChecker((x, y))
+        checker.start()
 
     x, y = coordinateToPixelAbs(x, y)
     pyautogui.click(x, y)

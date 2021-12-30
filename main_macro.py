@@ -174,9 +174,6 @@ def nextQuest():
         sendMessage(Macro.NEXT_QUEST)
         macros.wait(0.5)
         macros.goToNextQuest()
-        macros.wait(4)
-        macros.waitField()
-        macros.wait(4)
     except SkipException:
         return
     except NextQuestNotStart as e:
