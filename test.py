@@ -13,34 +13,9 @@ from imgrecg import *
 
 findWindow()
 
-startBattle()
 
-# for i in range(5):
-#     wait(0.1)
-#     clickPosX, clickPosY = 50 + 80 * i, 760
-#     imgRange = (50, 50)
-#     x1 = int(clickPosX - imgRange[0] / 2)
-#     y1 = int(clickPosY - imgRange[1] / 2)
-#     region = (x1, y1, imgRange[0], imgRange[1])
-#     img1 = screenshot(region).convert("L")
-#     click(clickPosX, clickPosY)
-#     wait(0.3)
-#     img2 = screenshot(region).convert("L")
-#     img1 = pil2cv(img1)
-#     img2 = pil2cv(img2)
-#
-#     img1_hist = cv2.calcHist([img1], [0], None, [256], [0, 256])
-#     img2_hist = cv2.calcHist([img2], [0], None, [256], [0, 256])
-#     if cv2.compareHist(img1_hist, img2_hist, 0) <= 0.8:
-#         print("click seikou")
-#     else:
-#         img3 = screenshot(region).convert("L")
-#         img3 = pil2cv(img3)
-#         img3_hist = cv2.calcHist([img3], [0], None, [256], [0, 256])
-#         if cv2.compareHist(img1_hist, img3_hist, 0) <= 0.8:
-#             print("click seikou")
-#         else:
-#             print("click sippai")
+
+
 
 # img = cv2.imread('images/wolflv.bmp', 0)
 # click(131, 532, check=True)
@@ -62,8 +37,8 @@ startBattle()
 # showImage = copy.copy(img)
 
 # img = screenshot()
-# elist = locateEnemy(limitRange=False)
-# goToNearestEnemy(elist)
+elist = locateEnemy(limitRange=False)
+goToNearestEnemy(elist, show=True)
 # low, upper = (105, 70, 0), (240, 200, 5)
 # cv2.imshow("ori", pil2cv(img))
 # showBitImage(img, low, upper)

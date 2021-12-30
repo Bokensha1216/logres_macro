@@ -60,7 +60,7 @@ def locateEnemy(limitRange=True, locateRange=100, locateCenter=None, show=False)
     return enemyList
 
 
-def goToNearestEnemy(enemyList):
+def goToNearestEnemy(enemyList, show=False):
     pX, pY = appWindow.center
     pPos = np.array([pX, pY])
     distances = {}
@@ -79,9 +79,10 @@ def goToNearestEnemy(enemyList):
             keisu = 30
     clickPoint = (nearestEnemy + direction * keisu)
 
-    # img = screenshot()
-    # imgrecg.drawVecOnImage(img, appWindow.center, nearestEnemy)
-    # imgrecg.drawVecOnImage(img, nearestEnemy, clickPoint)
+    if show:
+        img = screenshot()
+        imgrecg.drawVecOnImage(img, appWindow.center, nearestEnemy)
+        imgrecg.drawVecOnImage(img, nearestEnemy, clickPoint)
 
     click(int(clickPoint[0]), int(clickPoint[1]))
     return nearestEnemy
@@ -136,14 +137,14 @@ def startBattle():
     for i in range(5):
         wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760
-        imgRange = (50, 50)
-        x1 = int(clickPosX - imgRange[0] / 2)
-        y1 = int(clickPosY - imgRange[1] / 2)
-        region = (x1, y1, imgRange[0], imgRange[1])
-        img1 = screenshot(region).convert("L")
+        # imgRange = (50, 50)
+        # x1 = int(clickPosX - imgRange[0] / 2)
+        # y1 = int(clickPosY - imgRange[1] / 2)
+        # region = (x1, y1, imgRange[0], imgRange[1])
+        # img1 = screenshot(region).convert("L")
         click(clickPosX, clickPosY)
-        wait(0.3)
-        img2 = screenshot(region).convert("L")
+        # wait(0.3)
+        # img2 = screenshot(region).convert("L")
         if i == 0:
             wait(0.5)
             region = (13, 721, 68, 71)
