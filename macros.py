@@ -156,23 +156,23 @@ def startBattle():
                 wait(0.5)
                 img = screenshot(region)
                 cnts = detectContour(img, lower, upper)
-        else:
-            img1 = pil2cv(img1)
-            img2 = pil2cv(img2)
-            img1_hist = cv2.calcHist([img1], [0], None, [256], [0, 256])
-            img2_hist = cv2.calcHist([img2], [0], None, [256], [0, 256])
-            if cv2.compareHist(img1_hist, img2_hist, 0) <= 0.8:
-                continue
-            else:
-                wait(0.1)
-                img3 = screenshot(region).convert("L")
-                img3 = pil2cv(img3)
-                img3_hist = cv2.calcHist([img3], [0], None, [256], [0, 256])
-                if cv2.compareHist(img1_hist, img3_hist, 0) <= 0.8:
-                    continue
-                else:
-                    print("click fail")
-                    click(clickPosX, clickPosY)
+        # else:
+        #     img1 = pil2cv(img1)
+        #     img2 = pil2cv(img2)
+        #     img1_hist = cv2.calcHist([img1], [0], None, [256], [0, 256])
+        #     img2_hist = cv2.calcHist([img2], [0], None, [256], [0, 256])
+        #     if cv2.compareHist(img1_hist, img2_hist, 0) <= 0.8:
+        #         continue
+        #     else:
+        #         wait(0.1)
+        #         img3 = screenshot(region).convert("L")
+        #         img3 = pil2cv(img3)
+        #         img3_hist = cv2.calcHist([img3], [0], None, [256], [0, 256])
+        #         if cv2.compareHist(img1_hist, img3_hist, 0) <= 0.8:
+        #             continue
+        #         else:
+        #             print("click fail")
+        #             click(clickPosX, clickPosY)
 
 
 def differ(img1, img2):
