@@ -53,5 +53,6 @@ class NextAlreadyStarted(MyException):
 class SceneError(MyException):
     pass
 
+
 class TransitionError(MyException):
     pass

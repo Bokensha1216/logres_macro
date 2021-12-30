@@ -44,6 +44,7 @@ class Observer(threading.Thread):
                             keika = time_end - time_sta
                             if keika > 30:
                                 appWindow.eventQueue.put(CannotFindException())
+                                break
 
                 if event == Macro.TRACE_ENEMY:
                     print(event.name)
@@ -59,6 +60,7 @@ class Observer(threading.Thread):
                             keika = time_end - time_sta
                             if keika > 20:
                                 appWindow.eventQueue.put(CannotFindException())
+                                break
 
                 if event == Macro.BATTLE:
                     print(event.name)
@@ -75,8 +77,10 @@ class Observer(threading.Thread):
                             if keika > 100:
                                 if not macros.isInBattle():
                                     appWindow.eventQueue.put(NotInBattle())
+                                    break
                                 else:
                                     appWindow.eventQueue.put(BattleNotFinish())
+                                    break
 
                 if event == Macro.CHECK_QUEST_CLEAR:
                     print(event.name)
@@ -103,8 +107,10 @@ class Observer(threading.Thread):
                             if keika > 40:
                                 if macros.isInBattle():
                                     appWindow.eventQueue.put(SceneError("戦闘中です"))
+                                    break
                                 else:
                                     appWindow.eventQueue.put(CannotFindException())
+                                    break
 
                 if event == Macro.NEXT_QUEST:
                     print(event.name)

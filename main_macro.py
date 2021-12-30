@@ -120,8 +120,9 @@ def battle():
         print(e, end="")
         print(" : 逃げます")
         macros.run()
-        macros.wait(1.5)
+        macros.wait(3)
     except NotInBattle:
+        print("a")
         return
 
 
