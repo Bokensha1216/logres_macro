@@ -207,7 +207,7 @@ def isInField():
 
 
 def isInHome():
-    region = convToRegion(360, 0, 69, 51)
+    region = (360, 0, 69, 51)
     takara = locateOnScreen("resizedImages/takara.bmp", region=region, confidence=0.65,
                                 grayscale=True)
     if takara is None:
