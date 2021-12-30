@@ -222,7 +222,7 @@ def questCleared():
     offset = (0, appWindow.Status_y)
     recs = ContourRectangle(img, lower, upper, offset=offset)
     for rec in recs:
-        if rec[2] * rec[3] > 10000:
+        if convAreaToVirtual(rec[2] * rec[3]) > 9000:
             return True
 
     return False
