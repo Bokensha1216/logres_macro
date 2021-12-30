@@ -236,7 +236,7 @@ def detectContourFromEdge(image, prmMin, prmMax, kernel=3, show=False, external=
     # エッジ検出
     edge = detectEdge(image, prmMin, prmMax, show=show)
     # 膨張
-    kernel = np.ones((3, 3), np.uint8)
+    kernel = np.ones((kernel, kernel), np.uint8)
     dil = cv2.dilate(edge, kernel, iterations=1)
     # 輪郭検出
     mode = cv2.RETR_EXTERNAL if external else cv2.RETR_LIST

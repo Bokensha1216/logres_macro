@@ -156,23 +156,23 @@ class Macro(Flag):
     NEXT_QUEST = auto()
 
 
-class ClickChecker(threading.Thread):
-    def __init__(self, clickPos, range=(50, 50)):
-        super().__init__()
-        self.clickPos = clickPos
-        self.range = range
-
-    def run(self):
-        x1 = int(self.clickPos[0] - self.range[0] / 2)
-        y1 = int(self.clickPos[1] - self.range[1] / 2)
-        region = (x1, y1, self.range[0], self.range[1])
-        img1 = macros.screenshot(region).convert("L")
-        time.sleep(0.1)
-        img2 = macros.screenshot(region).convert("L")
-
-        img1 = pil2cv(img1)
-        img2 = pil2cv(img2)
-        im_diff = np.abs(img1.astype(int) - img2.astype(int))
-        if im_diff.max() < 100:
-            print(im_diff.max())
-            click(self.clickPos[0], self.clickPos[1])
+# class ClickChecker(threading.Thread):
+#     def __init__(self, clickPos, range=(50, 50)):
+#         super().__init__()
+#         self.clickPos = clickPos
+#         self.range = range
+#
+#     def run(self):
+#         x1 = int(self.clickPos[0] - self.range[0] / 2)
+#         y1 = int(self.clickPos[1] - self.range[1] / 2)
+#         region = (x1, y1, self.range[0], self.range[1])
+#         img1 = macros.screenshot(region).convert("L")
+#         time.sleep(0.1)
+#         img2 = macros.screenshot(region).convert("L")
+#
+#         img1 = pil2cv(img1)
+#         img2 = pil2cv(img2)
+#         im_diff = np.abs(img1.astype(int) - img2.astype(int))
+#         if im_diff.max() < 100:
+#             print(im_diff.max())
+#             click(self.clickPos[0], self.clickPos[1])

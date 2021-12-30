@@ -110,7 +110,7 @@ def isInBattle():
     return clock is not None
 
 
-def startBattle(checkClick=False):
+def startBattle():
     wait(4.5)
     while isInBattle():
         try:
@@ -136,8 +136,15 @@ def startBattle(checkClick=False):
     for i in range(5):
         wait(0.1)
         clickPosX, clickPosY = 50 + 80 * i, 760
+        imgRange = (50, 50)
+        x1 = int(clickPosX - imgRange[0] / 2)
+        y1 = int(clickPosY - imgRange[1] / 2)
+        region = (x1, y1, imgRange[0], imgRange[1])
+        img1 = screenshot(region).convert("L")
         click(clickPosX, clickPosY)
-        if i == 0 and checkClick is True:
+        wait(0.3)
+        img2 = screenshot(region).convert("L")
+        if i == 0:
             wait(0.5)
             region = (13, 721, 68, 71)
             img = screenshot(region)
@@ -149,6 +156,49 @@ def startBattle(checkClick=False):
                 wait(0.5)
                 img = screenshot(region)
                 cnts = detectContour(img, lower, upper)
+        else:
+            img1 = pil2cv(img1)
+            img2 = pil2cv(img2)
+            img1_hist = cv2.calcHist([img1], [0], None, [256], [0, 256])
+            img2_hist = cv2.calcHist([img2], [0], None, [256], [0, 256])
+            if cv2.compareHist(img1_hist, img2_hist, 0) <= 0.8:
+                continue
+            else:
+                wait(0.1)
+                img3 = screenshot(region).convert("L")
+                img3 = pil2cv(img3)
+                img3_hist = cv2.calcHist([img3], [0], None, [256], [0, 256])
+                if cv2.compareHist(img1_hist, img3_hist, 0) <= 0.8:
+                    continue
+                else:
+                    print("click fail")
+                    click(clickPosX, clickPosY)
+
+
+def differ(img1, img2):
+    img1 = img1.convert("L")
+    img2 = img2.convert("L")
+    cnts1 = detectContourFromEdge(img1, 300, 600, show=False, kernel=1)
+    cnts2 = detectContourFromEdge(img2, 300, 600, show=False, kernel=1)
+    cnts1 = list(filter(lambda x: convAreaToVirtual(cv2.contourArea(x)) >= 10, cnts1))
+    cnts2 = list(filter(lambda x: convAreaToVirtual(cv2.contourArea(x)) >= 10, cnts2))
+
+    if len(cnts1) != len(cnts2):
+        return True
+    else:
+        ruiji = []
+        for cnt1 in cnts1:
+            for cnt2 in cnts2:
+                ret = cv2.matchShapes(cnt1, cnt2, cv2.CONTOURS_MATCH_I1, 0)
+                ruiji.append(ret)
+        try:
+            print(min(ruiji))
+            if min(ruiji) > 1:
+                return True
+            else:
+                return False
+        except ValueError:
+            return True
 
 
 def run():
@@ -241,7 +291,30 @@ def goToNextQuest():
         return recs
 
     # もう一回ボタン
-    click(157, 541)
+    clickPosX, clickPosY = 157, 541
+    imgRange = (50, 50)
+    x1 = int(clickPosX - imgRange[0] / 2)
+    y1 = int(clickPosY - imgRange[1] / 2)
+    region = (x1, y1, imgRange[0], imgRange[1])
+    img1 = screenshot(region).convert("L")
+    click(clickPosX, clickPosY)
+    wait(0.3)
+    img2 = screenshot(region).convert("L")
+    img1 = pil2cv(img1)
+    img2 = pil2cv(img2)
+    img1_hist = cv2.calcHist([img1], [0], None, [256], [0, 256])
+    img2_hist = cv2.calcHist([img2], [0], None, [256], [0, 256])
+    if cv2.compareHist(img1_hist, img2_hist, 0) <= 0.8:
+        pass
+    else:
+        img3 = screenshot(region).convert("L")
+        img3 = pil2cv(img3)
+        img3_hist = cv2.calcHist([img3], [0], None, [256], [0, 256])
+        if cv2.compareHist(img1_hist, img3_hist, 0) <= 0.8:
+            pass
+        else:
+            click(clickPosX, clickPosY)
+
     wait(7)
 
     # 一番右のボタンをフィールドに戻るまで押す
