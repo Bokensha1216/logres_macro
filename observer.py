@@ -8,6 +8,7 @@ from coordinate import *
 from exception import *
 import macros
 from imageProcessing import *
+from wrapping import *
 
 
 class Observer(threading.Thread):
