@@ -161,6 +161,10 @@ def locateEnemy(limitRange=True):
         return None
     except CannotFindException as e:
         raise e
+    except TransitionError as e:
+        raise e
+    except SceneError as e:
+        return None
 
 
 def nextQuest():
@@ -181,6 +185,8 @@ def nextQuest():
             nextQuest()
     except NextAlreadyStarted:
         return
+    except SceneError as e:
+        raise e
 
 
 def sendMessage(msg):

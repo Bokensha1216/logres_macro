@@ -55,7 +55,7 @@ def locateEnemy(limitRange=True, locateRange=100, locateCenter=None, show=False)
         img = screenshot()
         drawOnImage(img, enemies)
 
-    enemyList = [(eX, eY + 45) for eX, eY, _, _ in enemies]
+    enemyList = [(eX + 15, eY + 50) for eX, eY, _, _ in enemies]
 
     return enemyList
 
@@ -69,9 +69,20 @@ def goToNearestEnemy(enemyList):
         distance = np.linalg.norm(ePos - pPos, ord=2)
         distances[enemy] = distance
 
-    nearestEnemy = min(distances)
+    nearestEnemy = min(distances, key=distances.get)
+    # print(distances, nearestEnemy)
     direction = imgrecg.direction_vec(appWindow.center, nearestEnemy)
-    clickPoint = (nearestEnemy + direction * 20)
+    keisu = 0
+    if distances[nearestEnemy] <= 50:
+        keisu = 10
+        if distances[nearestEnemy] <= 10:
+            keisu = 30
+    clickPoint = (nearestEnemy + direction * keisu)
+
+    # img = screenshot()
+    # imgrecg.drawVecOnImage(img, appWindow.center, nearestEnemy)
+    # imgrecg.drawVecOnImage(img, nearestEnemy, clickPoint)
+
     click(int(clickPoint[0]), int(clickPoint[1]))
     return nearestEnemy
 
@@ -107,7 +118,7 @@ def startBattle(checkClick=False):
         except IndexError:
             wait(1)
         else:
-            x, y = enemyPos[0][0], enemyPos[0][1] - 30
+            x, y = enemyPos[0][0], enemyPos[0][1] - 15
             click(x, y)
             wait(0.5)
             x2, y2 = 440, 790
@@ -195,6 +206,16 @@ def isInField():
         return True
 
 
+def isInHome():
+    region = convToRegion(360, 0, 69, 51)
+    takara = locateOnScreen("resizedImages/takara.bmp", region=region, confidence=0.65,
+                                grayscale=True)
+    if takara is None:
+        return False
+    else:
+        return True
+
+
 def questCleared():
     img = screenshot(region=appWindow.regionWithoutStatus)
     lower, upper = (100, 70, 0), (110, 90, 0)
@@ -238,8 +259,8 @@ def goToNextQuest():
         syuppatu = locateCenterOnScreen("resizedImages/syuppatu.bmp", region=syuppatuRegion, confidence=0.7,
                                         grayscale=True)
     wait(0.5)
-    print(syuppatu, syuppatuRegion)
-    click(syuppatu[0], syuppatu[1])
+    # print(syuppatu, syuppatuRegion)
+    click(393, 773)
 
 
 def wait(sec):

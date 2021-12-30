@@ -4,7 +4,8 @@ class FinishButtonException(Exception):
 
 
 class MyException(Exception):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args)
         for key in kwargs:
             setattr(self, key, kwargs[key])
 
@@ -47,3 +48,10 @@ class NotInBattle(MyException):
 class NextAlreadyStarted(MyException):
     def __str__(self):
         return "既に次のクエストです"
+
+
+class SceneError(MyException):
+    pass
+
+class TransitionError(MyException):
+    pass

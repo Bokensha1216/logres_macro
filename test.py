@@ -8,6 +8,7 @@ from imageProcessing import *
 import cv2
 import copy
 from macros import *
+from imgrecg import *
 
 
 # findWindow()
@@ -43,9 +44,11 @@ findWindow()
 # img = cv2.imread('images/wolflv.bmp', 0)
 # img = Image.open("images/test.bmp")
 img = screenshot()
-low, upper = (105, 70, 0), (240, 200, 5)
-cv2.imshow("ori", pil2cv(img))
-showBitImage(img, low, upper)
+elist = locateEnemy(limitRange=False)
+goToNearestEnemy(elist)
+# low, upper = (105, 70, 0), (240, 200, 5)
+# cv2.imshow("ori", pil2cv(img))
+# showBitImage(img, low, upper)
 # elist = locateEnemy(limitRange=False, locateRange=140, show=True)
 # macros.traceEnemy(elist)
 

@@ -42,7 +42,7 @@ class Observer(threading.Thread):
                             time.sleep(1)
                             time_end = time.time()
                             keika = time_end - time_sta
-                            if keika > 20:
+                            if keika > 30:
                                 appWindow.eventQueue.put(CannotFindException())
 
                 if event == Macro.TRACE_ENEMY:
@@ -86,6 +86,10 @@ class Observer(threading.Thread):
 
                 if event == Macro.LOCATE_ENEMY:
                     print(event.name)
+
+                    if macros.questCleared():
+                        appWindow.eventQueue.put(TransitionError("クエストクリアしています"))
+
                     time_sta = time.time()
                     while True:
                         try:
@@ -97,7 +101,10 @@ class Observer(threading.Thread):
                             time_end = time.time()
                             keika = time_end - time_sta
                             if keika > 40:
-                                appWindow.eventQueue.put(CannotFindException())
+                                if macros.isInBattle():
+                                    appWindow.eventQueue.put(SceneError("戦闘中です"))
+                                else:
+                                    appWindow.eventQueue.put(CannotFindException())
 
                 if event == Macro.NEXT_QUEST:
                     print(event.name)
@@ -113,8 +120,12 @@ class Observer(threading.Thread):
                             keika = time_end - time_sta
                             if keika > 30:
                                 if macros.isInField():
-                                    appWindow.eventQueue.put(NextAlreadyStarted())
-                                    break
+                                    if macros.isInHome():
+                                        appWindow.eventQueue.put(SceneError("城下町に戻っています"))
+                                        break
+                                    else:
+                                        appWindow.eventQueue.put(NextAlreadyStarted())
+                                        break
                                 nextQuestCount += 1
                                 if nextQuestCount <= 2:
                                     appWindow.eventQueue.put(NextQuestNotStart())
