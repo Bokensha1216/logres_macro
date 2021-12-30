@@ -175,4 +175,4 @@ class ClickChecker(threading.Thread):
         im_diff = np.abs(img1.astype(int) - img2.astype(int))
         if im_diff.max() < 100:
             print(im_diff.max())
-            click(*self.clickPos)
+            click(self.clickPos[0], self.clickPos[1])
