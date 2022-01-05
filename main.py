@@ -6,6 +6,7 @@ import main_macro
 from exception import *
 from coordinate import *
 from observer import *
+from questData import *
 
 if __name__ == "__main__":
     global mainThread, checkMacroThread
@@ -26,6 +27,13 @@ if __name__ == "__main__":
 
             def makeThread():
                 global mainThread, checkMacroThread
+                if var.get() == 0:
+                    QuestData.dayOrNight = Stage.DAY
+                else:
+                    QuestData.dayOrNight = Stage.NIGHT
+
+                print(QuestData.dayOrNight)
+
                 messageLabel["text"] = "開始"
                 mainThread = main_macro.syukaiQuest(questTimes)
                 checkMacroThread = threading.Thread(target=checkMacro)
@@ -82,6 +90,20 @@ if __name__ == "__main__":
     tk.Label(frame2, text="何回繰り返すか入力", font=("Helvetica", 11)).pack()
     questTimesEntry = tk.Entry(frame2, width=10)
     questTimesEntry.pack()
+
+    questInfoFrame = tk.Frame(masterFrame)
+    questInfoFrame.pack(pady=0)
+    chuyaLabel = tk.Label(questInfoFrame, text="クエストの昼夜")
+    chuyaLabel.pack(side=tk.LEFT, padx=10)
+    # チェック有無変数
+    var = tk.IntVar()
+    # value=0のラジオボタンにチェックを入れる
+    var.set(0)
+    # ラジオボタン作成
+    hiru = tk.Radiobutton(questInfoFrame, value=0, variable=var, text='昼')
+    hiru.pack(side=tk.LEFT, padx=10)
+    yoru = tk.Radiobutton(questInfoFrame, value=1, variable=var, text='夜')
+    yoru.pack(side=tk.LEFT, padx=10)
 
     frame3 = tk.Frame(masterFrame)
     frame3.pack(pady=10)

@@ -128,9 +128,10 @@ class Observer(threading.Thread):
                             time.sleep(1)
                             time_end = time.time()
                             keika = time_end - time_sta
-                            if keika > 30:
+                            if keika > 40:
                                 if macros.isInField():
-                                    if macros.isInHome():
+                                    # if macros.isInHome():
+                                    if False:
                                         appWindow.eventQueue.put(SceneError("城下町に戻っています"))
                                         break
                                     else:

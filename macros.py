@@ -5,6 +5,8 @@ from wrapping import *
 import numpy as np
 import imgrecg
 from imageProcessing import *
+from questData import *
+from perception import *
 
 
 def locateQuestNavi():
@@ -16,30 +18,16 @@ def locateQuestNavi():
         return x - 30, y + 56
 
 
-# def locateEnemy(limitRange=True, locateRange=100, locateCenter=None):
-#     enemies = locateAllOnScreen("resizedImages/lv.bmp", appWindow.regionWithoutStatus, confidence=0.7, grayscale=True)
-#
-#     enemyList = []
-#     for enemy in enemies:
-#         if limitRange:
-#             naviX, naviY = locateCenter
-#             region = (naviX - locateRange, naviY - locateRange, 2 * locateRange, 2 * locateRange)
-#             eX, eY = enemy[0], enemy[1]
-#             if isInRegion(eX, eY, region):
-#                 enemyList.append((eX + 11, eY + 39))
-#         else:
-#             eX, eY = enemy[0], enemy[1]
-#             enemyList.append((eX + 11, eY + 39))
-#
-#     return enemyList
-
 def locateEnemy(limitRange=True, locateRange=100, locateCenter=None, show=False):
     img = screenshot(appWindow.regionWithoutStatus)
-    low, upper = (105, 70, 0), (240, 200, 5)
+    img = pil2cv(img)
+    if QuestData.dayOrNight == Stage.NIGHT:
+        img = brightness(img, a=2, b=0)
+    low, upper = (105, 70, 0), (240, 150, 5)
     offset = (0, appWindow.Status_y)
-    ret = ContourRectangle(img, low, upper, show=False, offset=offset)
-    region = (0, 140, 500, 683)
-    excRegion = (0, 181, 65, 54)
+    ret = ContourRectangle(img, low, upper, show=False, offset=offset, conv=False)
+    region = (0, 140, 500, 633)
+    excRegion = (0, 171, 65, 64)
     enemies = filterDetectedRec(ret, region, excRegion=excRegion)
 
     if limitRange is True:
@@ -105,33 +93,28 @@ def traceEnemy(enemyList):
 
 
 def isInBattle():
-    region = convToRegion(367, 45, 446, 110)
+    region = convToRegion(367, 45, 446, 120)
     image = "resizedImages/clock.bmp"
     clock = locateOnScreen(image, region=region, grayscale=True, confidence=0.7)
     return clock is not None
 
 
 def startBattle():
-    wait(4.5)
+    # wait(4.5)
+    wait(1)
     while isInBattle():
         try:
             enemyPos = EnemyPosOnBattle()
         except IndexError:
             wait(1)
         else:
-            x, y = enemyPos[0][0], enemyPos[0][1] - 15
+            x, y = enemyPos[0][0], enemyPos[0][1]
             click(x, y)
             wait(0.5)
             x2, y2 = 440, 790
             pix = getPixel(x2, y2)
-            while pix[0] < 10:
-                click(x, y)
-                wait(0.5)
-                pix = getPixel(x2, y2)
-
-                if not isInBattle():
-                    return
-            break
+            if pix[0] >= 10:
+                break
 
     wait(1.0)
     for i in range(5):
@@ -145,18 +128,18 @@ def startBattle():
         click(clickPosX, clickPosY)
         # wait(0.3)
         # img2 = screenshot(region).convert("L")
-        if i == 0:
-            wait(0.5)
-            region = (13, 721, 68, 71)
-            img = screenshot(region)
-            lower, upper = (150, 255, 255), (255, 255, 255)
-            cnts = detectContour(img, lower, upper)
-            while isSelected(cnts) is False:
-                print(isSelected(cnts))
-                click(clickPosX, clickPosY)
-                wait(0.5)
-                img = screenshot(region)
-                cnts = detectContour(img, lower, upper)
+        # if i == 0:
+        #     wait(0.5)
+        #     region = (13, 721, 68, 71)
+        #     img = screenshot(region)
+        #     lower, upper = (150, 255, 255), (255, 255, 255)
+        #     cnts = detectContour(img, lower, upper)
+        #     while isSelected(cnts) is False:
+        #         print(isSelected(cnts))
+        #         click(clickPosX, clickPosY)
+        #         wait(0.5)
+        #         img = screenshot(region)
+        #         cnts = detectContour(img, lower, upper)
         # else:
         #     img1 = pil2cv(img1)
         #     img2 = pil2cv(img2)
@@ -222,15 +205,50 @@ def isSelected(contours, areaThr=25):
         return False
 
 
+# def EnemyPosOnBattle():
+#     img = screenshot(region=appWindow.regionWithoutStatus)
+#     low, upper = (0, 0, 0), (255, 0, 255)
+#     offset = (0, appWindow.Status_y)
+#     lines = detectLine(img, low, upper, offset=offset, show=False)
+#     region = (244, 163, 275, 513)
+#     lines = filterDetectedRec(lines, region)
+#     lines = mergeLines(lines)
+#     return [RegionCenter(line) for line in lines]
+
 def EnemyPosOnBattle():
-    img = screenshot(region=appWindow.regionWithoutStatus)
-    low, upper = (0, 0, 0), (255, 0, 255)
-    offset = (0, appWindow.Status_y)
-    lines = detectLine(img, low, upper, offset=offset, show=False)
-    region = (244, 163, 275, 513)
-    lines = filterDetectedRec(lines, region)
-    lines = mergeLines(lines)
-    return [RegionCenter(line) for line in lines]
+    region = (0, 90, 500, 620)
+    offset = (0, 90)
+    # fps = 10.0
+    #
+    # recoder = Recoder(fps)
+    # images = recoder.record(10, region)
+    #
+    # moveImages = movement(images, step=1)
+    # moveSum = MoveSum(moveImages, 0)
+    # recs = detectMovingObject(moveSum, 1000, 70000, showArea=False, dilL=2, offset=offset)
+    # drawOnImage(images[-1], recs, show=True, offset=offset)
+
+    img = screenshot(region=region)
+    cnts = detectFromStillImage(img, 1000, 70000)
+    # showContours(img, cnts)
+    recs = ContoursToVirtualRectangles(cnts, offset=offset)
+    # drawOnImage(img, recs, offset=offset)
+
+    hyouka = getEnemy(recs)
+
+    enemies = []
+    for kouho in hyouka:
+        if hyouka[kouho][0] > 0.5:
+            enemies.append(kouho)
+
+    if len(enemies) == 0:
+        raise IndexError
+
+    enemies.sort(reverse=True, key=lambda x:hyouka[x][0])
+
+    # for enemy in enemies:
+    #     print(hyouka[enemy])
+    return [RegionCenter(enemy) for enemy in enemies]
 
 
 # フィールド画面に戻るまで待つ
@@ -280,16 +298,57 @@ def questCleared():
 
 
 def goToNextQuest():
-    def detectButton(areaMin, areaMax):
-        img = screenshot(region=(24, 692, 452, 176))
-        offset = (24, 692)
+    def detectButton(img):
+        areaMin, areaMax = 2000, 12000
+        # region = (24, 445, 452, 423)
+        # img = screenshot(region=region)
+        # offset = (24, 445)
+        offset = (0, 0)
+
         prmMin, prmMax = 200, 400
-        contours = detectContourFromEdge(img, prmMin, prmMax)
+        contours = detectContourFromEdge(img, prmMin, prmMax, show=False, external=False)
         fil_contours = list(filter(lambda x: areaMax >= convAreaToVirtual(cv2.contourArea(x)) >= areaMin, contours))
         recs = ContoursToVirtualRectangles(fil_contours, offset=offset)
-        recs = list(filter(lambda x: 3 >= x[2] / (x[3] + 0.1) >= 2, recs))
-        recs = list(filter(lambda x: 9000 >= x[2] * x[3] >= 5000, recs))
+        recs = list(filter(lambda x: 5 >= x[2] / (x[3] + 0.1) >= 1.5, recs))
+        recs = list(filter(lambda x: 10000 >= x[2] * x[3] >= 2000, recs))
+        recs = non_max_suppression(recs)
         return recs
+
+    def posHyouka(poses):
+        def sigmoid(x):
+            sigmoid_range = 34.538776394910684
+            return 1.0 / (1.0 + np.exp(-np.clip(x, -sigmoid_range, sigmoid_range)))
+
+        hyouka = {}
+        for pos in poses:
+            hyouka[pos] = []
+
+            # x
+            pos_x = pos[0]
+            pos_x = (pos_x - 250) / 50
+            h = sigmoid(pos_x)
+            hyouka[pos].append(h)
+
+            # y
+            pos_y = pos[1]
+            pos_y = (pos_y - 450) / 90
+            h = sigmoid(pos_y)
+            hyouka[pos].append(h)
+
+        # print(hyouka)
+
+        return hyouka
+
+    def selectButton(buttons):
+        buttonCenters = [RegionCenter(button) for button in buttons]
+        # button = random.choice(buttonCenters)
+        hyouka = posHyouka(buttonCenters)
+        for button in hyouka:
+            buttonSim = sum(hyouka[button])
+            hyouka[button] = buttonSim
+        # print(hyouka)
+        button = max(hyouka, key=hyouka.get)
+        return button
 
     # もう一回ボタン
     clickPosX, clickPosY = 157, 541
@@ -318,15 +377,14 @@ def goToNextQuest():
 
     wait(7)
 
-    # 一番右のボタンをフィールドに戻るまで押す
+    # 一番評価の高いボタンをフィールドに戻るまで押す
     while not isInField():
-        buttons = detectButton(5000, 9000)
+        buttons = detectButton(screenshot())
         print(len(buttons))
 
-        if 2 <= len(buttons) <= 3:
-            buttonCenters = [RegionCenter(button) for button in buttons]
-            x, y = max(buttonCenters, key=lambda center: center[0])
-            click(x, y)
+        if 1 <= len(buttons):
+            button = selectButton(buttons)
+            click(*button)
         wait(3)
 
 

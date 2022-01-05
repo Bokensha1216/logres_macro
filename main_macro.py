@@ -105,7 +105,7 @@ def battle():
         sendMessage(Macro.BATTLE)
         # 戦闘開始
         macros.startBattle()
-        macros.wait(12)
+        macros.wait(8)
         while macros.isInBattle():
             # print(macros.isInBattle())
             macros.wait(1)

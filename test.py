@@ -14,13 +14,27 @@ from imgrecg import *
 findWindow()
 
 
+def detectButton(areaMin, areaMax):
+    region = (24, 445, 452, 423)
+    img = screenshot(region=region)
+    offset = (24, 445)
+    prmMin, prmMax = 200, 400
+    contours = detectContourFromEdge(img, prmMin, prmMax)
+    fil_contours = list(filter(lambda x: areaMax >= convAreaToVirtual(cv2.contourArea(x)) >= areaMin, contours))
+    recs = ContoursToVirtualRectangles(fil_contours, offset=offset)
+    recs = list(filter(lambda x: 5 >= x[2] / (x[3] + 0.1) >= 1.5, recs))
+    recs = list(filter(lambda x: 10000 >= x[2] * x[3] >= 2000, recs))
+    recs = non_max_suppression(recs)
+    return recs
 
 
+buttons = detectButton(2000, 12000)
+print(len(buttons))
+if 1 <= len(buttons):
+    buttonCenters = [RegionCenter(button) for button in buttons]
+    x, y = max(buttonCenters, key=lambda center: center[0])
+    click(x, y)
 
-# img = cv2.imread('images/wolflv.bmp', 0)
-# click(131, 532, check=True)
-
-# img = Image.open("images/test1.bmp")
 # img = img.crop((region[0], region[1], region[0]+region[2], region[1]+region[3]))
 # prmMin, prmMax = 200, 400
 # contours = detectContourFromEdge(img, prmMin, prmMax, show=True)
@@ -37,8 +51,6 @@ findWindow()
 # showImage = copy.copy(img)
 
 # img = screenshot()
-elist = locateEnemy(limitRange=False)
-goToNearestEnemy(elist, show=True)
 # low, upper = (105, 70, 0), (240, 200, 5)
 # cv2.imshow("ori", pil2cv(img))
 # showBitImage(img, low, upper)

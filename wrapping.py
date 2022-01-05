@@ -1,7 +1,7 @@
 from coordinate import *
 
 
-def click(x, y):
+def click(x, y, interval=None):
     if x < 0:
         x = 0
     if y < 0:
@@ -12,7 +12,12 @@ def click(x, y):
         y = appWindow.h
 
     x, y = coordinateToPixelAbs(x, y)
-    pyautogui.click(x, y)
+    if interval is None:
+        pyautogui.click(x, y)
+    else:
+        pyautogui.mouseDown(x=x, y=y)
+        time.sleep(interval)
+        pyautogui.mouseUp()
 
 
 def locateOnScreen(imageName, region, **kwargs):

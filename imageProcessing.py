@@ -43,8 +43,11 @@ def detectTemplate(image, template, lower, upper, threshold, show=False):
     return itemList
 
 
-def showBitImage(image, lower, upper):
-    img = pil2cv(image)
+def showBitImage(image, lower, upper, conv=True):
+    if conv:
+        img = pil2cv(image)
+    else:
+        img = image
     imgBin = cv2.inRange(img, lower, upper)
     cv2.imshow("bit", imgBin)
     cv2.waitKey(0)
@@ -52,9 +55,12 @@ def showBitImage(image, lower, upper):
     return imgBin
 
 
-def ContourRectangle(image, lower, upper, show=False, offset=(0, 0)):
-    # openCV型に変換
-    img = pil2cv(image)
+def ContourRectangle(image, lower, upper, show=False, offset=(0, 0), conv=True):
+    if conv:
+        # openCV型に変換
+        img = pil2cv(image)
+    else:
+        img = image
     # 2値化
     imgBin = cv2.inRange(img, lower, upper)
     # 膨張
@@ -130,17 +136,19 @@ def isInRegion(region, point):
         return False
 
 
-def drawOnImage(image, rectangles, offset=(0, 0)):
+def drawOnImage(image, rectangles, offset=(0, 0), show=True):
     rectangles = [VirtualRegionToImage(rectangle, offset) for rectangle in rectangles]
 
     image = pil2cv(image)
     for rec in rectangles:
         p1 = (rec[0], rec[1])
         p2 = (p1[0] + rec[2], p1[1] + rec[3])
-        cv2.rectangle(image, p1, p2, (0, 0, 255), 2)
-    cv2.imshow("draw", image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        cv2.rectangle(image, p1, p2, (255, 0, 0), 2)
+    if show:
+        cv2.imshow("draw", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    return image
 
 
 def drawSingleOnImage(image, rectangle, offset=(0, 0)):
@@ -222,8 +230,9 @@ def detectContour(image, lower, upper):
     return contours
 
 
-def detectEdge(image, prmMin, prmMax, show=False):
-    img = pil2cv(image)
+def detectEdge(img, prmMin, prmMax, show=False, toCV2=True):
+    if toCV2:
+        img = pil2cv(img)
     edges = cv2.Canny(img, prmMin, prmMax)
     if show:
         cv2.imshow("edge", edges)
@@ -267,3 +276,81 @@ def ContoursToVirtualRectangles(contours, offset=(0, 0)):
     recs = [cv2.boundingRect(cnt) for cnt in contours]
     recs = [ImageRegionToVirtual(rec, offset) for rec in recs]
     return recs
+
+
+def non_max_suppression(boxes):
+    filBox = []
+    while len(boxes) > 0:
+        max_area_box = max(boxes, key=lambda x: x[2] * x[3])
+        filBox.append(max_area_box)
+        newBoxes = []
+        for i, box in enumerate(boxes):
+            max_x1 = max_area_box[0]
+            max_x2 = max_area_box[0] + max_area_box[2]
+            max_y1 = max_area_box[1]
+            max_y2 = max_area_box[1] + max_area_box[3]
+            x1 = box[0]
+            x2 = box[0] + box[2]
+            y1 = box[1]
+            y2 = box[1] + box[3]
+
+            if max_x1 <= x1 and x2 <= max_x2:
+                if max_y1 <= y1 and y2 <= max_y2:
+                    continue
+            newBoxes.append(box)
+        boxes = newBoxes
+    return filBox
+
+
+def kirinuki(img, rec, offset):
+    rec = RegionCoordinateToClient(rec)
+    offset = coordinateToPixelRelative(*offset)
+    x1, y1 = rec[0] - offset[0], rec[1] - offset[1]
+    x2, y2 = x1 + rec[2], y1 + rec[3]
+    cropImage = img.crop((x1, y1, x2, y2))
+    return cropImage
+
+
+def brightness(img, a=1.0, b=0.0):
+    def adjust(img, alpha=1.0, beta=0.0):
+        # 積和演算を行う。
+        dst = alpha * img + beta
+        # [0, 255] でクリップし、uint8 型にする。
+        return np.clip(dst, 0, 255).astype(np.uint8)
+
+    # コントラスト、明るさを変更する。
+    dst = adjust(img, alpha=a, beta=b)
+    return dst
+
+
+def showContoursPoints(img, contours):
+    detectedRectangles = []
+    showImage = pil2cv(img)
+    for label in contours:
+        for point in label:
+            point = point[0]
+            cv2.circle(showImage, (point[0], point[1]), 2, (255, 0, 0), thickness=-1)
+
+    cv2.imshow("contPoints", showImage)
+    #
+    #     detectedRectangle = cv2.boundingRect(label)
+    #     detectedRectangles.append(detectedRectangle)
+    # # 表示
+    # showImage = pil2cv(img)
+    # for detectedRectangle in detectedRectangles:
+    #     p1 = (detectedRectangle[0], detectedRectangle[1])
+    #     p2 = (p1[0] + detectedRectangle[2], p1[1] + detectedRectangle[3])
+    #     cv2.rectangle(showImage, p1, p2, (255, 0, 0), 2)
+    # cv2.imshow("cont", showImage)
+    #
+    # return detectedRectangles
+
+
+def drawPoint(img, point, futosa=5):
+    showImage = pil2cv(img)
+    point = coordinateToPixelRelative(*point)
+    cv2.circle(showImage, (point[0], point[1]), futosa, (255, 0, 0), thickness=-1)
+
+    cv2.imshow("Point", showImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
